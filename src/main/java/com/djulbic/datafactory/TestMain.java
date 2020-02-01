@@ -1,0 +1,177 @@
+package com.djulbic.datafactory;
+
+
+import com.djulbic.datafactory.model.ColumnSql;
+import data.DataLibrary;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+
+import javax.el.MethodNotFoundException;
+import javax.sql.DataSource;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.TypeVariable;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class TestMain {
+
+    public static void main(String[] args) throws SQLException, InvocationTargetException, IllegalAccessException {
+        DataLibrary dataLibrary = DataLibrary.getEnglishData();
+
+        // getDouble(double minBound, double maxBound)
+        String methodCall = "pickRandom ( true, 'SSS', 'Bojan') ";
+        MethodCallParser callParser = new DataLibraryMethodCallParser();
+        callParser.parse(dataLibrary, methodCall);
+    }
+
+
+//        String methodNameSubstr = getMethodNameSubstrFromString(m);
+//        String paramSubstr = getMethodParamsSubstrFromString(m);
+//        List<String> extractedParams = getParams(paramSubstr);
+//
+//        System.out.println(methodNameSubstr);
+//        System.out.println(extractedParams);
+//
+//        Method methodByName = getMethodByName(methodNameSubstr, DataLibrary.class);
+//        Object[] params = getParams(methodByName, extractedParams);
+//
+//        System.out.println(Arrays.toString(params));
+//
+//        Object invoke = methodByName.invoke(dl, params);
+//        System.out.println("Return: " + invoke.toString());
+
+    private static Object[] getParams(Method method, List<String> extractedParams){
+        System.out.println(method.getName());
+        System.out.println(method.getParameterCount());
+
+        int parametarCount = method.getParameterCount();
+        Object[] methodParams = new Object[parametarCount];
+        if (parametarCount > 0){
+
+            for (int i = 0; i < method.getParameters().length; i++) {
+                Parameter parameter = method.getParameters()[i];
+                Class<?> type = parameter.getType();
+
+                if (type == int.class){
+                    System.out.println("type - int");
+                    System.out.println(extractedParams.get(i));
+                    methodParams[i] = Integer.parseInt(extractedParams.get(i));
+                }else if(type == float.class){
+                    System.out.println("type - float");
+                    methodParams[i] = Float.parseFloat(extractedParams.get(i));
+                }else if(type == double.class){
+                    System.out.println("type - double");
+                    methodParams[i] = Double.parseDouble(extractedParams.get(i));
+                } else if (type == String.class){
+                    System.out.println("type - String");
+                    methodParams[i] = extractedParams.get(i);
+                } else if(parameter.isVarArgs()){
+                    System.out.println("type - var args");
+                    methodParams[i] = extractedParams.toArray();
+                } else{
+                    System.out.println("type - not find");
+                }
+            }
+
+        }
+        for (Parameter parameter : method.getParameters()) {
+            System.out.println(parameter.getType());
+        }
+        System.out.println("---");
+        return methodParams;
+    }
+
+    private static String getMethodNameSubstrFromString(String methodCall){
+        if (methodCall.contains("(") && methodCall.contains(")")){
+            String methondName = methodCall.substring(0, methodCall.indexOf("("));
+            return methondName.trim();
+        }
+        return methodCall;
+    }
+
+    private static String getMethodParamsSubstrFromString(String methodCall){
+        if (methodCall.contains("(") && methodCall.contains(")")){
+            methodCall = methodCall.substring(methodCall.indexOf("(")+1, methodCall.lastIndexOf(")") );
+            return methodCall.trim();
+        }
+        return methodCall;
+    }
+
+    public static List<String> getParams(String tested){
+        List<String> tokensList = new ArrayList<String>();
+        boolean inQuotes = false;
+        StringBuilder b = new StringBuilder();
+        for (char c : tested.toCharArray()) {
+            switch (c) {
+                case ',':
+                    if (inQuotes) {
+                        b.append(c);
+                    } else {
+                        tokensList.add(b.toString().trim());
+                        b = new StringBuilder();
+                    }
+                    break;
+                case '\"':
+                    inQuotes = !inQuotes;
+                default:
+                    b.append(c);
+                    break;
+            }
+        }
+        tokensList.add(b.toString().trim());
+        return tokensList;
+    }
+
+    public static Method getMethodByName(String methodName, Class scanClass){
+        List<Method> methods = new ArrayList<>();
+        Method[] declaredMethods = scanClass.getDeclaredMethods();
+        for (Method method : declaredMethods) {
+            if (method.getName().equalsIgnoreCase(methodName)){
+                return method;
+            }
+        }
+        throw new MethodNotFoundException("Method " + methodName + " not found");
+    }
+
+
+    public static void mainss(String[] args) throws SQLException {
+        DataSource dataSource = getDataSource();
+        Connection connection = dataSource.getConnection();
+        DatabaseMetaData metaData = connection.getMetaData();
+
+        connection.close();
+    }
+
+    public static List<ColumnSql> getColumnsMetadata(DatabaseMetaData metaData) throws SQLException {
+        ResultSet resultSet = metaData.getColumns(null, null, "bojan", null); // ovo je db
+        List<ColumnSql> columnSql = new ArrayList<>();
+        while (resultSet.next()) {
+            String name = resultSet.getString("COLUMN_NAME");
+            String type = resultSet.getString("TYPE_NAME");
+            int size = resultSet.getInt("COLUMN_SIZE");
+
+            ColumnSql column = new ColumnSql(name, type, size);
+            // System.out.println("Column name: [" + name + "];" + "type: [" + type + "]; size: [" + size + "]"); // Column name: [id]; type: [INT]; size: [10]
+
+            columnSql.add(column);
+        }
+        return columnSql;
+    }
+
+    public static DataSource getDataSource() {
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
+        dataSourceBuilder.url("jdbc:mysql://localhost:3306");//bojan?createDatabaseIfNotExist=true");
+        dataSourceBuilder.username("root");
+        dataSourceBuilder.password("");
+        return dataSourceBuilder.build();
+    }
+}
