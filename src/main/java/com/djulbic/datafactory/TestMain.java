@@ -1,35 +1,61 @@
 package com.djulbic.datafactory;
 
 
+import com.djulbic.datafactory.metadata.providers.MySQLMetadataProvider;
 import com.djulbic.datafactory.model.ColumnSql;
-import data.DataLibrary;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
 import javax.el.MethodNotFoundException;
 import javax.sql.DataSource;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.TypeVariable;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class TestMain {
 
     public static void main(String[] args) throws SQLException, InvocationTargetException, IllegalAccessException {
-        DataLibrary dataLibrary = DataLibrary.getEnglishData();
 
-        // getDouble(double minBound, double maxBound)
-        String methodCall = "pickRandom ( true, 'SSS', 'Bojan') ";
-        MethodCallParser callParser = new DataLibraryMethodCallParser();
-        callParser.parse(dataLibrary, methodCall);
+
+
+//        String connectionUrl = "jdbc:mysql://localhost:3306";
+//        String username = "root";
+//        String password = "";
+//        MySQLMetadataProvider metadataProvider = new MySQLMetadataProvider(connectionUrl, username, password);
+//        List<String> databases = metadataProvider.getDatabases();
+//        System.out.println(databases);
+//
+//        List<String> test = metadataProvider.getTables("test");
+//        System.out.println(test);
+//
+//        List<ColumnSql> columns = metadataProvider.getColumns("test", "bojan");
+//        System.out.println(columns);
+
+//       MapMySQLTypesToDataLibrary conversion = new MapMySQLTypesToDataLibrary();
+//        System.out.println(conversion);
+//        List<Method> string = conversion.getMethods("INTEGER");
+//        for (Method s : string) {
+//            System.out.println(s);
+//        }
+//
+//
+//        System.out.println(Types.ARRAY);
+//        DataLibrary dataLibrary = DataLibrary.getEnglishData();
+//
+//        // getDouble(double minBound, double maxBound)
+//        String methodCall = "pickRandom ( true, 'SSS', 'Bojan') ";
+//        MethodCallParser callParser = new DataLibraryMethodCallParser();
+//        callParser.parse(dataLibrary, methodCall);
+
+//        DataLibraryMetadata meta = new DataLibraryMetadata();
+//        List<Method> type = meta.getMethodsThatReturnType("string", "int");
+//        for (Method method : type) {
+//            System.out.println(method);
+//        }
+
+
     }
 
 

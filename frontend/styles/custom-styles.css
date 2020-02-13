@@ -75,3 +75,22 @@ tr{
     border-radius: 0px 20px 20px 0px;
     border-right: 0px solid gray;
 }
+
+
+
+label span {
+    background: black !important;
+}
+
+:host([indeterminate]) [part="checkbox"], :host([checked]) [part="checkbox"] {
+    background-color: black !important;
+   }
+
+.mycheckbox label{
+    border: 5px solid red !important;
+    background-color: red !important;
+}
+
+.uncheckbox{
+    font-size: 5px important;
+}

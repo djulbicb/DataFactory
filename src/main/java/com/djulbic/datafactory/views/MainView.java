@@ -1,6 +1,7 @@
 package com.djulbic.datafactory.views;
 
 import com.djulbic.datafactory.components.ButtonRow;
+import com.djulbic.datafactory.metadata.providers.MySQLMetadataProvider;
 import com.djulbic.datafactory.model.ColumnSql;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
@@ -35,18 +36,36 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Route("")
-// @PWA(name = "Project Base for Vaadin Flow", shortName = "Project Base")
-@Theme(value = Lumo.class, variant = Material.DARK)
-@CssImport("styles/custom-styles.css")
-@HtmlImport("html/html.html")
+//@Route("")
+//// @PWA(name = "Project Base for Vaadin Flow", shortName = "Project Base")
+//@Theme(value = Lumo.class, variant = Material.DARK)
+//@CssImport("styles/custom-styles.css")
+//@HtmlImport("html/html.html")
 public class MainView extends VerticalLayout {
 
     @Autowired
     DataLibrary dataLibrary;
+    String connectionUrl = "jdbc:mysql://localhost:3306";
+    String username = "root";
+    String password = "";
 
     public MainView() throws SQLException {
+        MySQLMetadataProvider metadataProvider = new MySQLMetadataProvider(connectionUrl, username, password);
+
         VerticalLayout layout = new VerticalLayout();
+
+        ComboBox<String> comboBoxDatabase = new ComboBox<>();
+        ComboBox<String> comboBoxTables = new ComboBox<>();
+        comboBoxDatabase.addValueChangeListener(event -> {
+            List<String> tables = metadataProvider.getTables(event.getValue());
+            comboBoxTables.setItems(tables);
+        });
+
+        comboBoxDatabase.setItems(metadataProvider.getDatabases());
+        layout.add(comboBoxDatabase);
+        layout.add(comboBoxTables);
+
+
         layout.add(menu());
         Button button = new Button("Button");
         button.addClickListener(event -> {
@@ -75,7 +94,7 @@ public class MainView extends VerticalLayout {
         }
         System.out.println(list); // BIT, BOOL, TINYINT, TINYINT UNSIGNED, BIGINT
 
-// https://vaadin.com/docs/flow/components/tutorial-flow-grid.html
+        // https://vaadin.com/docs/flow/components/tutorial-flow-grid.html
         List<ColumnSql> columnsMetadata = getColumnsMetadata(metaData);
         Grid<ColumnSql> grid = new Grid<>(ColumnSql.class);
         grid.setItems(columnsMetadata);
