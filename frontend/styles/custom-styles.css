@@ -106,3 +106,8 @@ border-radius: 5px;
     height: 100vh;
     padding: 1em;
 }
+
+.rowLayout{
+padding: 0px !important;
+border: 1px solid red !important;
+}

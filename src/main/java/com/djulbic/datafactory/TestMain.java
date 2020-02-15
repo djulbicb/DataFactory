@@ -1,8 +1,10 @@
 package com.djulbic.datafactory;
 
 
-import com.djulbic.datafactory.metadata.providers.MySQLMetadataProvider;
+
 import com.djulbic.datafactory.model.ColumnSql;
+
+import data.DataLibrary;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
 import javax.el.MethodNotFoundException;
@@ -18,61 +20,13 @@ public class TestMain {
 
     public static void main(String[] args) throws SQLException, InvocationTargetException, IllegalAccessException {
 
-
-
-//        String connectionUrl = "jdbc:mysql://localhost:3306";
-//        String username = "root";
-//        String password = "";
-//        MySQLMetadataProvider metadataProvider = new MySQLMetadataProvider(connectionUrl, username, password);
-//        List<String> databases = metadataProvider.getDatabases();
-//        System.out.println(databases);
-//
-//        List<String> test = metadataProvider.getTables("test");
-//        System.out.println(test);
-//
-//        List<ColumnSql> columns = metadataProvider.getColumns("test", "bojan");
-//        System.out.println(columns);
-
-//       MapMySQLTypesToDataLibrary conversion = new MapMySQLTypesToDataLibrary();
-//        System.out.println(conversion);
-//        List<Method> string = conversion.getMethods("INTEGER");
-//        for (Method s : string) {
-//            System.out.println(s);
-//        }
-//
-//
-//        System.out.println(Types.ARRAY);
-//        DataLibrary dataLibrary = DataLibrary.getEnglishData();
-//
-//        // getDouble(double minBound, double maxBound)
-//        String methodCall = "pickRandom ( true, 'SSS', 'Bojan') ";
-//        MethodCallParser callParser = new DataLibraryMethodCallParser();
-//        callParser.parse(dataLibrary, methodCall);
-
-//        DataLibraryMetadata meta = new DataLibraryMetadata();
-//        List<Method> type = meta.getMethodsThatReturnType("string", "int");
-//        for (Method method : type) {
-//            System.out.println(method);
-//        }
+        DataLibrary dl = DataLibrary.getEnglishData();
+      DataLibraryMethodCallParser methodCallParser = new DataLibraryMethodCallParser();
+        Object parse = methodCallParser.parse(dl, "getDoubleInRange(3,5)");
+        System.out.println(parse);
 
 
     }
-
-
-//        String methodNameSubstr = getMethodNameSubstrFromString(m);
-//        String paramSubstr = getMethodParamsSubstrFromString(m);
-//        List<String> extractedParams = getParams(paramSubstr);
-//
-//        System.out.println(methodNameSubstr);
-//        System.out.println(extractedParams);
-//
-//        Method methodByName = getMethodByName(methodNameSubstr, DataLibrary.class);
-//        Object[] params = getParams(methodByName, extractedParams);
-//
-//        System.out.println(Arrays.toString(params));
-//
-//        Object invoke = methodByName.invoke(dl, params);
-//        System.out.println("Return: " + invoke.toString());
 
     private static Object[] getParams(Method method, List<String> extractedParams){
         System.out.println(method.getName());
@@ -168,14 +122,6 @@ public class TestMain {
     }
 
 
-    public static void mainss(String[] args) throws SQLException {
-        DataSource dataSource = getDataSource();
-        Connection connection = dataSource.getConnection();
-        DatabaseMetaData metaData = connection.getMetaData();
-
-        connection.close();
-    }
-
     public static List<ColumnSql> getColumnsMetadata(DatabaseMetaData metaData) throws SQLException {
         ResultSet resultSet = metaData.getColumns(null, null, "bojan", null); // ovo je db
         List<ColumnSql> columnSql = new ArrayList<>();
@@ -201,3 +147,58 @@ public class TestMain {
         return dataSourceBuilder.build();
     }
 }
+
+
+
+//        String methodNameSubstr = getMethodNameSubstrFromString(m);
+//        String paramSubstr = getMethodParamsSubstrFromString(m);
+//        List<String> extractedParams = getParams(paramSubstr);
+//
+//        System.out.println(methodNameSubstr);
+//        System.out.println(extractedParams);
+//
+//        Method methodByName = getMethodByName(methodNameSubstr, DataLibrary.class);
+//        Object[] params = getParams(methodByName, extractedParams);
+//
+//        System.out.println(Arrays.toString(params));
+//
+//        Object invoke = methodByName.invoke(dl, params);
+//        System.out.println("Return: " + invoke.toString());
+
+
+
+
+//        String connectionUrl = "jdbc:mysql://localhost:3306";
+//        String username = "root";
+//        String password = "";
+//        MySQLMetadataProvider metadataProvider = new MySQLMetadataProvider(connectionUrl, username, password);
+//        List<String> databases = metadataProvider.getDatabases();
+//        System.out.println(databases);
+//
+//        List<String> test = metadataProvider.getTables("test");
+//        System.out.println(test);
+//
+//        List<ColumnSql> columns = metadataProvider.getColumns("test", "bojan");
+//        System.out.println(columns);
+
+//       MapMySQLTypesToDataLibrary conversion = new MapMySQLTypesToDataLibrary();
+//        System.out.println(conversion);
+//        List<Method> string = conversion.getMethods("INTEGER");
+//        for (Method s : string) {
+//            System.out.println(s);
+//        }
+//
+//
+//        System.out.println(Types.ARRAY);
+//        DataLibrary dataLibrary = DataLibrary.getEnglishData();
+//
+//        // getDouble(double minBound, double maxBound)
+//        String methodCall = "pickRandom ( true, 'SSS', 'Bojan') ";
+//        MethodCallParser callParser = new DataLibraryMethodCallParser();
+//        callParser.parse(dataLibrary, methodCall);
+
+//        DataLibraryMetadata meta = new DataLibraryMetadata();
+//        List<Method> type = meta.getMethodsThatReturnType("string", "int");
+//        for (Method method : type) {
+//            System.out.println(method);
+//        }

@@ -13,6 +13,7 @@ public class SqlEntryRow extends HorizontalLayout{
 
     private TextField txtColumnName;
     private TextField txtColumnType;
+    private TextField txtColumnSize;
     private UncheckBox checkbox;
     private ComboBox<Method> comboBox;
     private TextField input;
@@ -66,7 +67,7 @@ public class SqlEntryRow extends HorizontalLayout{
         this.delimiter = delimiter;
     }
 
-    public SqlEntryRow(String columnName, String columnType) {
+    public SqlEntryRow(String columnName, String columnType, int columnSize) {
 
         checkbox = new UncheckBox();
 
@@ -80,18 +81,26 @@ public class SqlEntryRow extends HorizontalLayout{
         txtColumnType.setValue(columnType);
         txtColumnType.setPlaceholder("Column type");
 
+        txtColumnSize = new TextField();
+        txtColumnSize.setReadOnly(true);
+        txtColumnSize.setValue(columnSize + "");
+        txtColumnSize.setPlaceholder("Column size");
+        txtColumnSize.setWidth("5em");
+
        comboBox = new ComboBox<>();
         comboBox.setPlaceholder("method");
 
         input = new TextField();
         input.setPlaceholder("Input");
-        input.setVisible(false);
+        input.setReadOnly(true);
+        //input.setVisible(false);
 
         delimiter = new TextField();
         delimiter.setPlaceholder("delimiter");
-        delimiter.setVisible(false);
+        delimiter.setReadOnly(true);
+        //delimiter.setVisible(false);
 
-        add(checkbox, txtColumnName, txtColumnType, comboBox, input, delimiter);
+        add(checkbox, txtColumnName, txtColumnType, txtColumnSize, comboBox, input, delimiter);
         setFlexGrow(1, txtColumnName);
 
         MapMySQLTypesToDataLibrary map = new MapMySQLTypesToDataLibrary();
@@ -102,15 +111,15 @@ public class SqlEntryRow extends HorizontalLayout{
         comboBox.addValueChangeListener(event -> {
             Method value = event.getValue();
             if (value.getParameterCount() == 0) {
-                input.setVisible(false);
+                input.setReadOnly(true);
             } else {
-                input.setVisible(true);
+                input.setReadOnly(false);
             }
 
             if (value.getParameterCount() > 0 && value.isVarArgs()) {
-                delimiter.setVisible(true);
+                delimiter.setReadOnly(false);
             } else {
-                delimiter.setVisible(false);
+                delimiter.setReadOnly(true);
             }
         });
 

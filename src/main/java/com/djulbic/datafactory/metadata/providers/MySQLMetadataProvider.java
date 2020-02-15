@@ -111,9 +111,11 @@ public class MySQLMetadataProvider {
     }
 
     public boolean insertQuery(List<String> insertQuery){
+        Connection connection = null;
+        Statement statement = null;
         try {
-            Connection connection = getDataSource().getConnection();
-            Statement statement = connection.createStatement();
+            connection = getDataSource().getConnection();
+             statement = connection.createStatement();
 
             for (String query : insertQuery) {
                 statement.executeUpdate(query);
@@ -125,6 +127,17 @@ public class MySQLMetadataProvider {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+        }  finally {
+            try {
+                if (connection !=null){
+                    connection.close();
+                }
+                if (statement !=null){
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return false;
