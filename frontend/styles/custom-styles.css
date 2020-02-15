@@ -94,3 +94,15 @@ label span {
 .uncheckbox{
     font-size: 5px important;
 }
+
+.border{
+border: 2px solid #36485f !important;
+border-radius: 5px;
+}
+
+.container{
+    width: 70% !important;
+    margin: auto !important;
+    height: 100vh;
+    padding: 1em;
+}

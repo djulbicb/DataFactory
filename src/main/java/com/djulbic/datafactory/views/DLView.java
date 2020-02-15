@@ -9,6 +9,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.html.Article;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -21,6 +23,11 @@ import com.vaadin.flow.theme.material.Material;
 import data.DataLibrary;
 import data.DataLibraryMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.sliderpanel.SliderPanel;
+import org.vaadin.sliderpanel.SliderPanelBuilder;
+import org.vaadin.sliderpanel.SliderPanelStyles;
+import org.vaadin.sliderpanel.client.SliderMode;
+import org.vaadin.sliderpanel.client.SliderTabPosition;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,7 +39,7 @@ import java.util.stream.Collectors;
 @Theme(value = Lumo.class, variant = Material.DARK)
 @CssImport("styles/custom-styles.css")
 @HtmlImport("html/html.html")
-public class DLView extends VerticalLayout {
+public class DLView extends HorizontalLayout {
 
     String connectionUrl = "jdbc:mysql://localhost:3306";
     String username = "root";
@@ -48,56 +55,40 @@ public class DLView extends VerticalLayout {
     VerticalLayout rowLayout = new VerticalLayout();
 
     public DLView() {
+        this.setHeightFull();
 
-        this.setMaxWidth("60%");
+        HorizontalLayout parent = new HorizontalLayout();
+        parent.setClassName("container");
+        parent.setHeightFull();
+        parent.setSpacing(false);
 
+        VerticalLayout historyLogLayout = buildHistoryLogLayout();
+        historyLogLayout.setSpacing(false);
+        TextField url = new TextField();
+        TextField username = new TextField();
+        TextField password = new TextField();
 
-        Button button = new Button("Tesxt");
-        button.addClickListener(event -> {
-            try {
-               String insertQuery = getInsertQuery();
-                boolean isInserted = metadataProvider.insertQuery(insertQuery);
-                if (isInserted){
-                    Notification notification = new Notification("This notification has text content", 3000);
-                    notification.open();
-                }
+        historyLogLayout.add(url, username, password);
 
-
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
-
-        VerticalLayout layout = new VerticalLayout();
+        VerticalLayout controlLayout = new VerticalLayout();
 
 
+        parent.add(historyLogLayout);
+        parent.add(controlLayout);
 
 
-
-
+        controlLayout.add(buildRowButtonLayout());
         comboBoxDatabase.addValueChangeListener(event -> {
             List<String> tables = metadataProvider.getTables(event.getValue());
             comboBoxTables.setItems(tables);
         });
 
         comboBoxDatabase.setItems(metadataProvider.getDatabases());
-        layout.add(button);
-        button.addClickListener(event -> {
-            System.out.println("heee");
-            try {
-                getInsertQuery();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
 
-        layout.add(comboBoxDatabase);
-        layout.add(comboBoxTables);
-        layout.add(rowLayout);
+        controlLayout.add(comboBoxDatabase);
+        controlLayout.add(comboBoxTables);
+        controlLayout.add(rowLayout);
+        controlLayout.setSpacing(false);
 
 
         comboBoxTables.addValueChangeListener(event -> {
@@ -111,28 +102,46 @@ public class DLView extends VerticalLayout {
 
         });
 
-        addComponentAsFirst(layout);
-        layout.setWidthFull();
-        layout.setSpacing(false);
+        addComponentAsFirst(parent);
+        setWidthFull();
+        //layout.setSpacing(false);
         rowLayout.setWidthFull();
         rowLayout.setSpacing(false);
 
-        layout.addAndExpand(buildRowButtonLayout());
     }
 
+    private VerticalLayout buildHistoryLogLayout() {
+        VerticalLayout layout = new VerticalLayout();
+        HorizontalLayout rowButton = new HorizontalLayout();
 
+        rowButton.add(new Button("Create"));
+        rowButton.add(new Button("Update"));
+        rowButton.add(new Button("Delete"));
+        rowButton.add(new Button("Import"));
+        rowButton.add(new Button("Export"));
+        layout.add(rowButton);
+
+        VerticalLayout logs= new VerticalLayout();
+
+        layout.add(logs);
+
+        logs.addClassName("border");
+        layout.setMaxWidth("30%");
+
+        return layout;
+    }
 
     HorizontalLayout buildRowButtonLayout(){
         HorizontalLayout rowLayout = new HorizontalLayout();
 
-        rowLayout.add(new Button("Insert"));
+        rowLayout.add(buildInsertButton("Insert",1));
 
         Label label = new Label("Insert multiple");
         //label.setWidthFull();
         rowLayout.add(label);
 
         ButtonRow row = new ButtonRow();
-        row.addComponents(new Button("25"), new Button("50"), new Button("100"),new Button("250") ,new Button("500") ,new Button("1000"));
+        row.addComponents(buildInsertButton(25), buildInsertButton(50), buildInsertButton(100),buildInsertButton(100) ,buildInsertButton(500) ,buildInsertButton(1000));
 
         rowLayout.add(row);
 
@@ -140,6 +149,34 @@ public class DLView extends VerticalLayout {
         rowLayout.add(new Button("Custom"));
 
         return rowLayout;
+    }
+
+    private Button buildInsertButton(int numberOfTimes){
+        return buildInsertButton(numberOfTimes + "", numberOfTimes);
+    }
+
+    private Button buildInsertButton(String title, int numberOfTimes){
+        Button button = new Button();
+        button.setText(title);
+
+        button.addClickListener(event -> {
+            try {
+                List<String> insertQueries = new ArrayList<>();
+                for (int i = 0; i < numberOfTimes; i++) {
+                    insertQueries.add(getInsertQuery());
+                }
+                boolean isInserted = metadataProvider.insertQuery(insertQueries);
+                if (isInserted){
+                    Notification notification = new Notification(insertQueries.size() + " entries have been succesfully entered", 3000);
+                    notification.open();
+                }
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+        return button;
     }
 
     public String getInsertQuery() throws InvocationTargetException, IllegalAccessException {
