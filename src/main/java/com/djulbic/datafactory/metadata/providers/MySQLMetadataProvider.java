@@ -6,6 +6,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MySQLMetadataProvider {
@@ -101,6 +102,32 @@ public class MySQLMetadataProvider {
         }
         return columnSql;
 
+    }
+
+    public boolean insertQuery(String insertQuery){
+        List<String> emptyList = new ArrayList();
+        emptyList.add(insertQuery);
+        return insertQuery(emptyList);
+    }
+
+    public boolean insertQuery(List<String> insertQuery){
+        try {
+            Connection connection = getDataSource().getConnection();
+            Statement statement = connection.createStatement();
+
+            for (String query : insertQuery) {
+                statement.executeUpdate(query);
+            }
+
+            statement.close();
+            connection.close();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     private DataSource getDataSource() {
