@@ -1,6 +1,11 @@
 # DataFactory
 
 > Under development
+TODO:
+- fix multiple parametars
+- implement delimiter
+- add logging history
+- save/load
 
 Exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as a API service at port 8081 and web app with UI. 
 Send any JSON object to API and it will fill it with random data based strikethrough texton what is specified. For example
