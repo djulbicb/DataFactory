@@ -37,7 +37,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Route("")
-// @PWA(name = "Project Base for Vaadin Flow", shortName = "Project Base")
 @Theme(value = Lumo.class, variant = Material.DARK)
 @CssImport("styles/custom-styles.css")
 @HtmlImport("html/html.html")
@@ -65,12 +64,8 @@ public class DLView extends HorizontalLayout {
         parent.setSpacing(false);
 
         VerticalLayout historyLogLayout = buildHistoryLogLayout();
+        historyLogLayout.setWidth("35%");
         historyLogLayout.setSpacing(false);
-        TextField url = new TextField();
-        TextField username = new TextField();
-        TextField password = new TextField();
-
-        historyLogLayout.add(url, username, password);
 
         VerticalLayout controlLayout = new VerticalLayout();
 
@@ -115,14 +110,11 @@ public class DLView extends HorizontalLayout {
 
     private VerticalLayout buildHistoryLogLayout() {
         VerticalLayout layout = new VerticalLayout();
-        HorizontalLayout rowButton = new HorizontalLayout();
 
-        rowButton.add(new Button("Create"));
-        rowButton.add(new Button("Update"));
-        rowButton.add(new Button("Delete"));
-        rowButton.add(new Button("Import"));
-        rowButton.add(new Button("Export"));
-        layout.add(rowButton);
+        ButtonRow row = new ButtonRow();
+        row.setMaxWidth("100%");
+        row.addComponents(new Button("Create"), new Button("Update"), new Button("Delete"), new Button("Import"), new Button("Export"));
+        layout.add(row);
 
         VerticalLayout logs = new VerticalLayout();
 
@@ -131,20 +123,26 @@ public class DLView extends HorizontalLayout {
         logs.addClassName("border");
         layout.setMaxWidth("30%");
 
+        TextField url = new TextField();
+        TextField username = new TextField();
+        TextField password = new TextField();
+
+        layout.add(url, username, password);
+        layout.setClassName("history-log-layout");
         return layout;
     }
 
     HorizontalLayout buildRowButtonLayout() {
         HorizontalLayout rowLayout = new HorizontalLayout();
 
-        rowLayout.add(buildInsertButton("Insert", 1));
+        //rowLayout.add(buildInsertButton("Insert", 1));
 
         Label label = new Label("Insert multiple");
-        //label.setWidthFull();
+
         rowLayout.add(label);
 
         ButtonRow row = new ButtonRow();
-        row.addComponents(buildInsertButton(25), buildInsertButton(50), buildInsertButton(100), buildInsertButton(100), buildInsertButton(500), buildInsertButton(1000));
+        row.addComponents(buildInsertButton(1),buildInsertButton(25), buildInsertButton(50), buildInsertButton(100), buildInsertButton(100), buildInsertButton(500), buildInsertButton(1000));
 
         rowLayout.add(row);
 

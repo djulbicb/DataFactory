@@ -85,7 +85,7 @@ public class SqlEntryRow extends HorizontalLayout{
         txtColumnSize.setReadOnly(true);
         txtColumnSize.setValue(columnSize + "");
         txtColumnSize.setPlaceholder("Column size");
-        txtColumnSize.setWidth("5em");
+        txtColumnSize.setWidth("4em");
 
        comboBox = new ComboBox<>();
         comboBox.setPlaceholder("method");
@@ -107,6 +107,7 @@ public class SqlEntryRow extends HorizontalLayout{
         List<Method> varchar = map.getMethods(columnType);
 
         comboBox.setItems(varchar);
+        comboBox.setClassName("method-combo-box");
         comboBox.setItemLabelGenerator(item -> item.getName());
         comboBox.addValueChangeListener(event -> {
             Method value = event.getValue();
@@ -124,6 +125,7 @@ public class SqlEntryRow extends HorizontalLayout{
         });
 
 
+        setClassName("sql-entry-row");;
 
     }
 }
