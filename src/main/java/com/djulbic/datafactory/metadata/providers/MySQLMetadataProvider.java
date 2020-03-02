@@ -1,7 +1,9 @@
 package com.djulbic.datafactory.metadata.providers;
 
 import com.djulbic.datafactory.model.ColumnSql;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -24,9 +26,11 @@ public class MySQLMetadataProvider {
     public List<String> getDatabases()  {
         Connection connection = null;
         Statement statement = null;
+        HikariDataSource dataSource = getDataSource();
+
         List<String> databases = new ArrayList<>();
         try {
-            connection = getDataSource().getConnection();
+            connection = dataSource.getConnection();
             statement = connection.createStatement();
 
             ResultSet rs = statement.executeQuery("SHOW DATABASES");
@@ -34,12 +38,15 @@ public class MySQLMetadataProvider {
                 String databaseName = rs.getString(1);
                 databases.add(databaseName);
             }
+            rs.close();
         }catch (Exception e){
             e.printStackTrace();
         } finally {
             try {
                 statement.close();
                 connection.close();
+                dataSource.close();
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -51,9 +58,10 @@ public class MySQLMetadataProvider {
     public List<String> getTables(String databaseName) {
         Connection connection = null;
         Statement statement = null;
+        HikariDataSource dataSource = getDataSource();
         List<String> tables = new ArrayList<>();
         try {
-            connection = getDataSource().getConnection();
+            connection = dataSource.getConnection();
             statement = connection.createStatement();
 
             ResultSet rs = statement.executeQuery("SHOW TABLES FROM " + databaseName);
@@ -61,12 +69,14 @@ public class MySQLMetadataProvider {
                 String tableName = rs.getString(1);
                 tables.add(tableName);
             }
+            rs.close();
         }catch (Exception e){
             e.printStackTrace();
         } finally {
             try {
                 statement.close();
                 connection.close();
+                dataSource.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -79,8 +89,13 @@ public class MySQLMetadataProvider {
         List<ColumnSql> columnSql = new ArrayList<>();
 
         try {
-            Connection connection = getDataSource().getConnection();
+            HikariDataSource dataSource = getDataSource();
+
+            Connection connection = dataSource.getConnection();
             DatabaseMetaData metaData = connection.getMetaData();
+
+            // ResultSet importedKeys = metaData.getImportedKeys(null, null, tableName);
+            // metaData.getPrimaryKeys(null, null, tableName);
 
             String databaseAndTable = databaseName + "." + tableName;
             ResultSet resultSet = metaData.getColumns(null, null, databaseAndTable, null); // ovo je db
@@ -91,12 +106,14 @@ public class MySQLMetadataProvider {
                 int size = resultSet.getInt("COLUMN_SIZE");
 
                 ColumnSql column = new ColumnSql(name, type, size);
-                // System.out.println("Column name: [" + name + "];" + "type: [" + type + "]; size: [" + size + "]"); // Column name: [id]; type: [INT]; size: [10]
+                if (!columnSql.contains(column)){
+                    columnSql.add(column);
+                }
 
-                columnSql.add(column);
             }
-
+            resultSet.close();
             connection.close();
+            dataSource.close();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -113,8 +130,10 @@ public class MySQLMetadataProvider {
     public boolean insertQuery(List<String> insertQuery){
         Connection connection = null;
         Statement statement = null;
+        HikariDataSource dataSource = getDataSource();
         try {
-            connection = getDataSource().getConnection();
+
+            connection = dataSource.getConnection();
              statement = connection.createStatement();
 
             for (String query : insertQuery) {
@@ -123,6 +142,7 @@ public class MySQLMetadataProvider {
 
             statement.close();
             connection.close();
+            dataSource.close();
 
             return true;
         } catch (SQLException e) {
@@ -143,13 +163,19 @@ public class MySQLMetadataProvider {
         return false;
     }
 
-    private DataSource getDataSource() {
+    private JdbcTemplate getJdbcTemplate(){
+        DataSource dataSource = getDataSource();
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        return template;
+    }
+
+    private HikariDataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
         dataSourceBuilder.url("jdbc:mysql://localhost:3306");//bojan?createDatabaseIfNotExist=true");
         dataSourceBuilder.username("root");
         dataSourceBuilder.password("");
-        return dataSourceBuilder.build();
+        return (HikariDataSource)dataSourceBuilder.build();
     }
 
 }

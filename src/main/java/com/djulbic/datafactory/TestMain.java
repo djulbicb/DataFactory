@@ -4,7 +4,7 @@ package com.djulbic.datafactory;
 
 import com.djulbic.datafactory.model.ColumnSql;
 
-import data.DataLibrary;
+import com.djulbic.datafactory.model.MethodDTO;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
 import javax.el.MethodNotFoundException;
@@ -15,15 +15,20 @@ import java.lang.reflect.Parameter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TestMain {
 
     public static void main(String[] args) throws SQLException, InvocationTargetException, IllegalAccessException {
 
-        DataLibrary dl = DataLibrary.getEnglishData();
-      DataLibraryMethodCallParser methodCallParser = new DataLibraryMethodCallParser();
-        Object parse = methodCallParser.parse(dl, "getDoubleInRange(3,5)");
-        System.out.println(parse);
+        MapMySQLTypesToDataLibrary map = new MapMySQLTypesToDataLibrary();
+        Map<String, List<MethodDTO>> map1 = map.getMappedSQLTypesToDataLibraryMethods();
+        System.out.println(map1);
+
+//        DataLibrary dl = DataLibrary.getEnglishData();
+//      DataLibraryMethodCallParser methodCallParser = new DataLibraryMethodCallParser();
+//        Object parse = methodCallParser.parse(dl, "getDoubleInRange(3,5)");
+//        System.out.println(parse);
 
 
     }

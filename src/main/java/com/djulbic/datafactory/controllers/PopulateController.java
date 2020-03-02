@@ -1,25 +1,71 @@
 package com.djulbic.datafactory.controllers;
 
 import com.djulbic.datafactory.DataLibraryMethodCallParser;
+import com.djulbic.datafactory.MapMySQLTypesToDataLibrary;
 import com.djulbic.datafactory.MethodCallParser;
+import com.djulbic.datafactory.metadata.providers.MySQLMetadataProvider;
+import com.djulbic.datafactory.model.ColumnSql;
+import com.djulbic.datafactory.model.DatabaseRequestConfig;
+import com.djulbic.datafactory.model.MethodDTO;
 import data.DataLibrary;
+import data.DataLibraryLanguage;
+import data.DataLibraryMetadata;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.el.MethodNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequestMapping("/api")
 @RestController
 public class PopulateController {
 
     DataLibrary data = DataLibrary.getEnglishData();
+    MapMySQLTypesToDataLibrary mapMySQLTypesToDataLibrary = new MapMySQLTypesToDataLibrary();
+    DataLibraryMethodCallParser parser = new DataLibraryMethodCallParser();
+
+    @Autowired
+    MySQLMetadataProvider mysqlProvider;
+
+    @GetMapping("/getMappedSQLTypesToDataLibraryMethods")
+    public Map<String, List<MethodDTO>> getMappedSQLTypesToDataLibraryMethods(){
+        return mapMySQLTypesToDataLibrary.getMappedSQLTypesToDataLibraryMethods();
+    }
+
+    @PostMapping("/execute")
+    public String execute(@RequestBody(required = false) List<ColumnSql> columnSqls){
+        System.out.println("Execute");
+        for (ColumnSql sql : columnSqls) {
+
+            MethodDTO method = sql.getMethod();
+            String name = method.getMethodName();
+
+            String inputParametars = method.getInputParametars();
+            name = name + "(" + inputParametars + ")";
+
+            parser.parse(data, name);
+
+            System.out.println("-----");
+        }
+        return "sss";
+    }
+
+    @PostMapping("/getColumns")
+    public List<ColumnSql> getColumns(@RequestBody DatabaseRequestConfig databaseRequestConfig){
+        System.out.println(databaseRequestConfig);
+
+        List<ColumnSql> columns = mysqlProvider.getColumns(databaseRequestConfig.getDatabaseName(), databaseRequestConfig.getDatabaseTable());
+        System.out.println(columns);
+
+        return columns;
+    }
 
     @PostMapping("/getdata")
     public String getData(@RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
@@ -30,6 +76,32 @@ public class PopulateController {
         Object o = parseJson(next);
         System.out.println(o);
         return o.toString();
+    }
+
+    @GetMapping("/getDataLibraryMethod")
+    public List<String> getDataLibraryMethod(){
+        System.out.println("Request" + LocalDateTime.now());
+        DataLibraryMetadata metadata = new DataLibraryMetadata();
+        return metadata.getExposedMethods().stream().map(method -> method.getName()).collect(Collectors.toList());
+    }
+
+    @GetMapping("/getDatabases")
+    public List<String> getDataBases(){
+        return mysqlProvider.getDatabases();
+    }
+
+    @PostMapping("/getTables")
+    public List<String> getDataBasesTables(@RequestBody DatabaseRequestConfig requestConfig){
+        System.out.println("getTables");
+        System.out.println(requestConfig);
+        System.out.println("----");
+        return mysqlProvider.getTables(requestConfig.getDatabaseName());
+    }
+
+    @GetMapping("/getDataLibraryLanguages")
+    public List<String> getDataLibraryLanguages(){
+        List<String> collect = Arrays.stream(DataLibraryLanguage.values()).map(dataLibraryLanguage -> dataLibraryLanguage.toString()).collect(Collectors.toList());
+        return collect;
     }
 
     @PostMapping("/getdata/{x}")
