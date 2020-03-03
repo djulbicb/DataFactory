@@ -1,0 +1,270 @@
+/* You can add global styles to this file, and also import other style files */
+
+*{
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
+    /* border: 1px solid black; */
+}
+
+.container{
+    max-width: 1440px;
+}
+
+
+.table-bar{
+    background-color: #007bff;
+    font-size: 110%;
+    color: white;
+    border-radius: 3px;
+  }
+
+
+
+
+    /*
+ * Globals
+ */
+
+/* Links */
+a,
+a:focus,
+a:hover {
+  color: #fff;
+}
+
+/* Custom default button */
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: #333;
+  text-shadow: none; /* Prevent inheritance from `body` */
+  background-color: #fff;
+  border: .05rem solid #fff;
+}
+
+
+/*
+ * Base structure
+ */
+
+html,
+body {
+  height: 100%;
+  background-color: #333;
+}
+
+body {
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: flex;
+  -ms-flex-pack: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+}
+
+.cover-container {
+  width: 65%;
+}
+
+
+/*
+ * Header
+ */
+.masthead {
+  margin-bottom: 2rem;
+}
+
+.masthead-brand {
+  margin-bottom: 0;
+}
+
+.nav-masthead .nav-link {
+  padding: .25rem 0;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .5);
+  background-color: transparent;
+  border-bottom: .25rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  border-bottom-color: rgba(255, 255, 255, .25);
+}
+
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+
+.nav-masthead .active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+@media (min-width: 48em) {
+  .masthead-brand {
+    float: left;
+  }
+  .nav-masthead {
+    float: right;
+  }
+}
+
+
+/*
+ * Cover
+ */
+.cover {
+  padding: 0 1.5rem;
+}
+.cover .btn-lg {
+  padding: .75rem 1.25rem;
+  font-weight: 700;
+}
+
+
+/*
+ * Footer
+ */
+.mastfoot {
+  color: rgba(255, 255, 255, .5);
+}
+
+
+.center-vertical{
+    line-height: 38px;
+}
+
+.theme-bg{
+    background-color: #3c3a3a;
+    font-size: 110%; 
+    color:white;
+    border-radius: .25rem !important;
+    border: 1px solid
+    #757171 !important;
+}
+
+.border {
+    border: 1px solid#414a53 !important;
+}
+
+input, select{
+    /* background-color: #3c3a3a !important;
+    color: #fff !important; */
+    
+}
+
+
+.custom-control-label::before, 
+.custom-control-label::after {
+    top: 0rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    background-color: transparent;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    color: #fff;
+    background-color: transparent !important;
+  }
+
+  .flex-grow-1{
+    flex-grow: 1;
+  }
+
+  .flex-grow-2{
+    flex-grow: 2;
+  }
+
+  .flex-grow-6{
+    flex-grow: 1;
+  }
+
+  .flex-grow-8{
+    flex-grow: 6;
+  }
+
+  .flex-grow-10{
+    flex-grow: 10;
+  }
+
+  .flex-grow-12{
+    flex-grow: 12;
+  }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.mat-snack-bar-container{
+    /* left: 1em;
+    position: absolute;
+    bottom: 0px; */
+    margin: 60px !important;
+}
+
+.mat-form-field-flex{
+    background-color: white;
+    border-radius: 0.25rem;
+    color: #333;
+    
+}
+.mat-form-field-infix{
+    border: 0px;
+    padding-left: 0.75em !important;
+    text-shadow: 0px !important;
+    
+}
+
+.mat-form-field.mat-focused .mat-form-field-label{
+    color: #333;
+
+}
+
+.mat-form-field-label{
+    padding-left: 0.75rem !important;
+}
+
+.mat-form-field{
+    line-height: 1.4;
+    width: 100%;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-wrapper{
+    padding: inherit !important;
+}
+
+body{
+    text-shadow: 0px 0px 0px #000;
+}
+
+::ng-deep .mat-input-underline {
+    display: none;
+}
+
+.mat-form-field-wrapper{
+    padding-bottom: 0px;
+}
+
+.mat-checkbox-inner-container{
+    height: 38px !important;
+    width: 38px !important;
+    left: -20px;
+}
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background{
+    background-color: #17a2b8;
+}
+
+.input-deactive{
+    opacity: 0.1;
+    background-color: white;
+    border-radius: 0.25rem;
+    border-right: 5px solid #333;
+}
+
+.blue-snackbar{
+    background: #0069d9;
+    color: white;
+}

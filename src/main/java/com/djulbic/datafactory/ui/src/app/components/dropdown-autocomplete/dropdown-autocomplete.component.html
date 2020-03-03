@@ -1,0 +1,14 @@
+<div class="input-group mb-3">
+    <input class="form-control" aria-label="Database name" placeholder="Database name" type="text" name="city" list="cityname" (click)="cityname.style.display = 'block'; cityname.style.display = 'none';">
+    <datalist #cityname id="cityname">
+        <option *ngFor="let item of data" value="item">{{item}}</option>
+    </datalist>
+    <div class="input-group-append">
+        <button class="btn btn-primary">X</button>
+    </div>
+</div>
+
+{{console.log(input)}}
+
+
+

@@ -1,0 +1,63 @@
+
+
+<div class="row mb-1 position-relative" (click)="click()">
+    
+    
+    <div class="row-checkbox custom-control custom-checkbox center-vertical text-left">
+        <mat-checkbox class="example-margin" [(ngModel)]="entry.checked">Checked</mat-checkbox>
+        <!-- <input type="checkbox" class="custom-control-input" id="{{'check_' + entry.name}}" [(ngModel)]="entry.checked">
+        <label class="custom-control-label" for="{{'check_' + entry.name}}">&nbsp;</label> -->
+    </div>
+
+
+    <div class="col-3 p-0 pr-1">
+        <input class="form-control m-0" aria-label="Column name" placeholder="Column name" type="text" name="city" value="{{entry.name}}" readonly>
+    </div>
+    <div class="col-2 p-0 pr-1">
+        <input class="form-control m-0" aria-label="Column type" placeholder="Column type" type="text" name="type" value="{{entry.type + ' [' + entry.size + ']'}}" readonly>
+    </div>
+    <div class="col-3 p-0 pr-1">
+        <div class="form-group m-0">
+
+            <mat-form-field class="example-full-width" appearance="none" floatLabel="never">
+                <input type="text"
+                       placeholder="Pick one"
+                       aria-label="Number"
+                       matInput
+                       [formControl]="myControl"
+                       [matAutocomplete]="auto"
+                >
+          
+                <mat-autocomplete #auto="matAutocomplete" 
+                    [displayWith]="getOptionText"  
+                    (optionSelected)='optionSelected($event.option.value)'
+                >
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option.methodName}}()
+                  </mat-option>
+                </mat-autocomplete>
+          
+              </mat-form-field>
+
+        </div>
+    </div>
+    <div class="col-2 p-0 pr-1" [ngClass]="{'input-deactive': !ifShowParamsInput}">
+        <input *ngIf="ifShowParamsInput" class="form-control m-0" [(ngModel)]="entry.method.inputParametars" aria-label="Column name" [readonly]="!ifShowParamsInput" #inputParametars  placeholder="Parametars..." type="text" name="city">
+    </div>
+    <div class="col-1 p-0 pr-1" [ngClass]="{'input-deactive': !ifShowDelimiterInput}">
+        <input *ngIf="ifShowDelimiterInput" class="form-control m-0" [(ngModel)]="entry.method.inputDelimiter" aria-label="Column size" [readonly]="!ifShowParamsInput" #inputDelimiter placeholder="Delimiter..." type="text" name="city">
+    </div>
+    <div class="col-1 p-0 border rounded">
+        <table class="w-100 text-center center-vertical">
+            <tr>
+                <td>PK</td>
+                <td>FK</td>
+                <td>AI</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<!-- <div *ngIf="entry.method">
+    {{entry.method.inputParametars}}
+</div> -->
+

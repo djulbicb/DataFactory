@@ -1,0 +1,86 @@
+
+<div class="row border rounded p-1 pl-3 mb-2 theme-bg">
+    Database configuration
+</div>
+
+<div class="row mb-1">
+    <div class="col">
+        <database-header (emmitShowColumns)="showTable($event)"></database-header>
+    </div>
+</div>
+<!-- 
+<form class="example-form">
+
+    <mat-form-field class="example-full-width" floatLabel="never">
+      <input type="text"
+             placeholder="Pick one"
+             aria-label="Number"
+             matInput
+             
+             [formControl]="myControl"
+             [matAutocomplete]="auto">
+
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+
+    </mat-form-field>
+  </form>
+   -->
+  
+
+<div class="row h-100">
+    <div class="col-10 h-100">
+        <div class="theme-bg mb-1 row text-center">
+            <div class="col-3">
+                Column name
+            </div>
+            <div class="col-2">
+                Method
+            </div>
+            <div class="col-3">
+                Type
+            </div>
+            <div class="col-2">
+                Parametars
+            </div>
+            <div class="col-1">
+                Delimiter
+            </div>
+            <div class="col-1">
+                Meta
+            </div>
+        </div>
+
+        
+
+        <div class="form-group">
+            <sql-entry-row *ngFor="let row of columnRows" [mapped]="mappedSQLTypesToDataLibraryMethods" [entry]="row"></sql-entry-row>
+        </div>
+
+    </div>
+
+    <div class="col-2 p-0 text-center pl-1">
+        <div class="theme-bg mb-1">
+            History
+        </div>    
+        
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-block btn-info" (click)="click()">sss</button>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+
+
+
+<!-- // https://stackblitz.com/edit/angular-filtering-rxjs?file=src%2Fapp%2Fapp.component.ts
+// https://stackoverflow.com/questions/49662341/how-to-pass-observable-value-to-input-angular-4
+// https://stackoverflow.com/questions/39819392/cannot-find-a-differ-supporting-object-object-object-of-type-object-ngfor -->

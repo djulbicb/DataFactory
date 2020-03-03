@@ -1,0 +1,151 @@
+<!-- <dropdown-autocomplete [input]="inputdatabases"></dropdown-autocomplete> -->
+
+<div class="row ">
+    <!-- DATABASE AND TABLE - START -->
+    <div class="col-6 p-0 ">
+        <div class="input-group mb-1">
+            <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="selectedDatabase" (change)="onDatabaseChange($event)">
+                <option value="" selected disabled hidden>Choose database...</option>
+                <option *ngFor="let item of databases" value="{{item}}">{{item}}</option>
+            </select>
+            <div class="input-group-append">
+                <button class="btn btn-primary">X</button>
+            </div>
+        </div>
+
+        <div class="input-group mb-1">
+            <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="selectedTable" (change)="onTableChange($event)">
+                <option value="" selected disabled hidden>Choose table...</option>
+                <option *ngFor="let item of tables" value="{{item}}">{{item}}</option>
+            </select>
+            <div class="input-group-append">
+                <button class="btn btn-primary">X</button>
+            </div>
+        </div>
+    </div>
+    <!-- DATABASE AND TABLE - END -->
+
+    <!-- CONNECTION AND LANGUAGE - START -->
+    <div class="col-4 p-0 pl-1 mb-1">
+        <div class="mb-1">
+            <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="selectedDatabase" (change)="changeConnection()">
+                <option value="" selected disabled hidden>Choose connection...</option>
+                <option *ngFor="let item of availableConnections" value="{{item}}">{{item | titlecase}}</option>
+            </select>
+        </div>
+
+        <div>
+            <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="selectedDatabase" (change)="changeLanguage()">
+                <option value="" selected disabled hidden>Choose language...</option>
+                <option *ngFor="let item of dataLibraryLanguages" value="{{item}}">{{item | titlecase}}</option>
+            </select>
+        </div>
+    </div>
+    <!-- CONNECTION AND LANGUAGE - END -->
+
+    <div class="col-2 p-0 pl-1 mb-1">
+        <div class="w-100">
+            <button class="btn btn-block btn-primary mb-1" data-toggle="modal" data-target="#myModal">Create connection</button>
+        </div>
+        <div>
+            <div class="custom-control custom-checkbox w-100 center-vertical text-left">
+                <input type="checkbox" class="custom-control-input" id="globalData">
+                <label class="custom-control-label" for="globalData">&nbsp;&nbsp;&nbsp;&nbsp; Global data</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 p-0">
+        <div class="btn-group w-100" role="group" aria-label="Basic example">
+            <button *ngFor="let btnValue of buttonBatchValues" type="button" class="btn border btn-primary" (click)="batchQuery(btnValue)">{{btnValue}}</button>
+        </div>
+    </div>
+
+    <div class="col-2 p-0 pl-1">
+        <input class="form-control" type="number" value="10" id="example-text-input">
+    </div>
+
+    <div class="col-2 p-0 pl-1">
+        <button class="btn btn-block btn-primary">Execute</button>
+    </div>
+
+    <div class="col-2 p-0 pl-1">
+        <div class="custom-control custom-checkbox w-100 center-vertical text-left">
+            <input type="checkbox" class="custom-control-input" id="autoCommit">
+            <label class="custom-control-label" for="autoCommit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auto commit</label>
+        </div>
+    </div>
+    
+</div>
+
+<hr>
+
+
+
+
+
+
+<!-- ADD CONNECTION MODAL WINDOW - START -->
+
+  <!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Define connection</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+
+            <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label">Database:</label>
+                <div class="col-10">
+                    <select class="custom-select">
+                        <option selected>MySQL</option>
+                        <option value="1">H2</option>
+                        <option value="1">MariaDB</option>
+                        <option value="2">Postgrel</option>
+                        <option value="3">MSQL</option>
+                    </select>
+                </div>
+              </div>
+
+            <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label">Url:</label>
+                <div class="col-10">
+                  <input class="form-control" required type="text" value="" id="example-text-input">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-search-input" class="col-2 col-form-label">Username:</label>
+                <div class="col-10">
+                  <input class="form-control" required type="search" value="" id="example-search-input">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-email-input" class="col-2 col-form-label">Password</label>
+                <div class="col-10">
+                  <input class="form-control" required type="email" value="" id="example-email-input">
+                </div>
+              </div>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save connection</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+
+        <small>*Username and password saved as raw text. Not safe for production</small>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD CONNECTION MODAL WINDOW - END -->
