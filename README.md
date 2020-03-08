@@ -22,6 +22,8 @@ UI connects with database (just mysql for now) and inserts data into database
 - specify connection
 - on error show message
 
+<img src="./ui.PNG">
+
 ## API
 Send any JSON object to API and it will fill it with random data based on specified method call. For example
 ```
