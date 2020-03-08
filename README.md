@@ -1,15 +1,29 @@
 # DataFactory
 
 > Under development
-TODO:
-- fix multiple parametars
-- implement delimiter
+
+DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as a API service and web app with UI.
+<br>These 2 projects are configurable lorem ipsum services that provide random but realistic data.
+
+API service can receive any JSON object and fill it with data (Check example below).<br> 
+UI connects with database (just mysql for now) and inserts data into database 
+
+### To do:
+- when parsing method call replace String param as Object[]
+- in ui, on blur check if method exists and select/empty out text field
+- check if primary, foreign, null
+- allow disabling a field
+- add clear method field in ui
+- add on select database remove table selection 
 - add logging history
 - save/load
-- global config thats sets data library factory
+- add execute with with specified number of items
+- pick language
+- specify connection
+- on error show message
 
-Exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as a API service at port 8081 and web app with UI. 
-Send any JSON object to API and it will fill it with random data based strikethrough texton what is specified. For example
+## API
+Send any JSON object to API and it will fill it with random data based on specified method call. For example
 ```
     {
         "name": "getNameMale()",
@@ -56,7 +70,7 @@ Order of properties is not kept at the moment. Here is a test example using PHP
     	}
     }
     
-    $url = 'http://localhost:8081/api/getdata';
+    $url = 'http://localhost:8091/api/getdata';
     $tastArray = array('key1' => 'getName()', 'key2' => 'getName()');
     $testObj = new Test("getName()", "getSurname()", "getIntInRange(10,15)", "getStreet()") ;
     var_dump($testObj);

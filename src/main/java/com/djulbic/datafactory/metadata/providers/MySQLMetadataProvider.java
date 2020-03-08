@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.persistence.Column;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public class MySQLMetadataProvider {
     }
 
     public List<ColumnSql> getColumns(String databaseName, String tableName){
+        String db = String.format("`%s`.`%s`", databaseName, tableName);
         List<ColumnSql> columnSql = new ArrayList<>();
 
         try {
@@ -100,17 +102,48 @@ public class MySQLMetadataProvider {
             String databaseAndTable = databaseName + "." + tableName;
             ResultSet resultSet = metaData.getColumns(null, null, databaseAndTable, null); // ovo je db
 
-            while (resultSet.next()) {
-                String name = resultSet.getString("COLUMN_NAME");
-                String type = resultSet.getString("TYPE_NAME");
-                int size = resultSet.getInt("COLUMN_SIZE");
+            System.out.println("-----------------");
+            PreparedStatement stmt = connection.prepareStatement("SHOW COLUMNS FROM " + db);
+            ResultSet set = stmt.executeQuery();
 
-                ColumnSql column = new ColumnSql(name, type, size);
-                if (!columnSql.contains(column)){
-                    columnSql.add(column);
+            //store all of the columns names
+            List<String> names = new ArrayList<>();
+            while (set.next()) {
+                String columnName = set.getString("field").toUpperCase();
+                String columnType = set.getString("type").toUpperCase();
+                String columnTypeLength = "";
+                columnType = columnType.replaceAll("unsigned", "").trim();
+                if (columnType.contains("(")){
+                    int start = columnType.indexOf("(");
+                    int end = columnType.indexOf(")");
+
+                    columnTypeLength = columnType.substring(start+1,end);
+
+                    columnType = columnType.substring(0,start);
                 }
 
+                ColumnSql column = new ColumnSql(columnName, columnType, columnTypeLength);
+                columnSql.add(column);
             }
+            System.out.println("-----------------");
+
+//            while (resultSet.next()) {
+//                Object object = resultSet.getObject("COLUMN_NAME");
+//                System.out.println(object.getClass());
+//                System.out.println(object);
+//                String name = resultSet.getString("COLUMN_NAME");
+//                String type = resultSet.getString("TYPE_NAME");
+//                int size = resultSet.getInt("COLUMN_SIZE");
+//
+//                type = type.replaceAll("UNSIGNED", "").trim();
+//
+//                ColumnSql column = new ColumnSql(name, type, size);
+//                if (!columnSql.contains(column)){
+//                    columnSql.add(column);
+//                }
+//
+//            }
+            set.close();
             resultSet.close();
             connection.close();
             dataSource.close();

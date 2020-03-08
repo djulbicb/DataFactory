@@ -7,7 +7,7 @@ public class ColumnSql {
     private boolean checked;
     private String name;
     private String type;
-    private int size;
+    private String size;
     private boolean isForeignKey;
     private boolean isPrimaryKey;
     private boolean isNullable;
@@ -16,11 +16,11 @@ public class ColumnSql {
     public ColumnSql() {
     }
 
-    public ColumnSql(String name, String type, int size) {
+    public ColumnSql(String name, String type, String size) {
         this(true, name, type, size, false, false, false, null);
     }
 
-    public ColumnSql(boolean checked, String name, String type, int size, boolean isForeignKey, boolean isPrimaryKey, boolean isNullable, MethodDTO method) {
+    public ColumnSql(boolean checked, String name, String type, String size, boolean isForeignKey, boolean isPrimaryKey, boolean isNullable, MethodDTO method) {
         this.checked = checked;
         this.name = name;
         this.type = type;
@@ -69,11 +69,11 @@ public class ColumnSql {
         this.type = type;
     }
 
-    public int getSize() {
+    public String getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(String size) {
         this.size = size;
     }
 

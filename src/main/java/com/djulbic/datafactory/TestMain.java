@@ -133,7 +133,7 @@ public class TestMain {
         while (resultSet.next()) {
             String name = resultSet.getString("COLUMN_NAME");
             String type = resultSet.getString("TYPE_NAME");
-            int size = resultSet.getInt("COLUMN_SIZE");
+            String size = resultSet.getString("COLUMN_SIZE");
 
             ColumnSql column = new ColumnSql(name, type, size);
             // System.out.println("Column name: [" + name + "];" + "type: [" + type + "]; size: [" + size + "]"); // Column name: [id]; type: [INT]; size: [10]

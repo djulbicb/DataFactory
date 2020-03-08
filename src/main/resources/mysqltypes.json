@@ -16,6 +16,7 @@
   "VARCHAR" : ["int", "string", "double", "float", "Object"],
   "LONGNVARCHAR" : ["int", "string", "double", "float", "Object"],
   "LONGVARCHAR" : ["int", "string", "double", "float", "Object"],
+  "TEXT" : ["int", "string", "double", "float", "Object"],
   "DATE" : [""],
   "TIME" : [""],
   "TIMESTAMP" : [""],

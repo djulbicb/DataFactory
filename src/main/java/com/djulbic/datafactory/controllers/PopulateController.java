@@ -6,15 +6,18 @@ import com.djulbic.datafactory.MethodCallParser;
 import com.djulbic.datafactory.metadata.providers.MySQLMetadataProvider;
 import com.djulbic.datafactory.model.ColumnSql;
 import com.djulbic.datafactory.model.DatabaseRequestConfig;
+import com.djulbic.datafactory.model.ExecuteRequestDTO;
 import com.djulbic.datafactory.model.MethodDTO;
 import data.DataLibrary;
 import data.DataLibraryLanguage;
 import data.DataLibraryMetadata;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import utils.StringUtility;
 
 import javax.el.MethodNotFoundException;
 import java.lang.reflect.InvocationTargetException;
@@ -40,20 +43,51 @@ public class PopulateController {
     }
 
     @PostMapping("/execute")
-    public String execute(@RequestBody(required = false) List<ColumnSql> columnSqls){
+    public String execute(@RequestBody(required = false) ExecuteRequestDTO request){
+        System.out.println(request);
+        String databaseName = request.getConfig().getDatabaseName();
+        String databaseTable = request.getConfig().getDatabaseTable();
+        String dbTable = String.format("`%s`.`%s`", databaseName, databaseTable);
+        String insertQuery = "INSERT INTO %s (%s) VALUES (%s);";
+
+        List<String> columnNames = new ArrayList<>();
+        List<Object> columnValues = new ArrayList<>();
+
+        DataLibraryMetadata metadata = new DataLibraryMetadata();
         System.out.println("Execute");
-        for (ColumnSql sql : columnSqls) {
+        for (ColumnSql sql : request.getColumns()) {
 
             MethodDTO method = sql.getMethod();
-            String name = method.getMethodName();
 
-            String inputParametars = method.getInputParametars();
-            name = name + "(" + inputParametars + ")";
+            if (method != null){
+                String name = method.getMethodName();
+                String inputParametars = method.getInputParametars();
+                name = name + "(" + inputParametars + ")";
 
-            parser.parse(data, name);
+                Object parseValue = parser.parse(data, name);
 
-            System.out.println("-----");
+                columnNames.add("`" + sql.getName() + "`");
+
+                if(sql.getType().contains("VARCHAR")){
+                    columnValues.add("'" + parseValue + "'");
+                }else{
+                    columnValues.add(parseValue);
+                }
+
+
+            }
+            System.out.println("-----" + sql.getName());
         }
+        System.out.println(columnNames);
+        System.out.println(columnValues);
+        String col = StringUtils.join(columnNames, ",");
+        String val = StringUtils.join(columnValues, ",");
+
+        String query = String.format(insertQuery, dbTable, col, val);
+        System.out.println(query);
+
+        mysqlProvider.insertQuery(query);
+
         return "sss";
     }
 
