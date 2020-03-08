@@ -9,18 +9,19 @@ API service can receive any JSON object and fill it with data (Check example bel
 UI connects with database (just mysql for now) and inserts data into database 
 
 ### To do:
-- when parsing method call replace String param as Object[]
-- in ui, on blur check if method exists and select/empty out text field
-- check if primary, foreign, null
-- allow disabling a field
-- add clear method field in ui
-- add on select database remove table selection 
-- add logging history
-- save/load
-- add execute with with specified number of items
-- pick language
-- specify connection
-- on error show message
+- back - when parsing method call replace String param as Object[]
+- ui - in ui, on blur check if method exists and select/empty out text field
+- ui/back - check if primary, foreign, null
+- ui - allow disabling a field
+- ui - add clear method field in ui
+- ui - add on select database remove table selection 
+- ui/back - add logging history
+- ui/back - save/load
+- ui - add execute with with specified number of items
+- ui/back - add pick language
+- ui - add specify connection
+- ui/back - add on error show message
+- ui - fix multiple fields being connected 
 
 <img src="./ui.PNG">
 
