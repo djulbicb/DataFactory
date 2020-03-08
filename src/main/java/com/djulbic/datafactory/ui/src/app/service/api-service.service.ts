@@ -8,6 +8,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { DatabaseRequestConfig } from '../model/DatabaseRequestConfig';
 import { ColumnSql } from '../model/ColumnSql';
+import { ExecuteRequestDTO } from '../model/ExecuteRequestDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ httpOptions = {
   })
 };
 
-url =  'http://localhost:8085'
+url =  'http://localhost:8091';
 configUrl = this.url + '/api/getDataLibraryMethod';
 urlGetDatabases = this.url + '/api/getDatabases';
 urlGetTables = this.url + '/api/getTables';
@@ -37,10 +38,14 @@ urlGetColumns = this.url + '/api/getColumns'
 urlGetMappedSQLTypesToDataLibraryMethods = this.url + '/api/getMappedSQLTypesToDataLibraryMethods';
 urlExecute = this.url + '/api/execute';
 
-execute(data:ColumnSql[]){
+execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[]){
   console.log("Execute");
-  console.log(data);
-  return this.http.post(this.urlExecute, data);
+  let request = new ExecuteRequestDTO();
+  request.columns = data;
+  request.config = requestConfig;
+  
+  console.log(request);
+  return this.http.post(this.urlExecute, request);
 }
 
 getMappedSQLTypesToDataLibraryMethods(){

@@ -37,7 +37,7 @@ export class DatabaseHeaderComponent implements OnInit {
     })
   }
 
-  private getDatabaseRequestConfig(){
+  public getDatabaseRequestConfig(){
     let config:DatabaseRequestConfig = {
       databaseName: "",
       databaseTable: "",

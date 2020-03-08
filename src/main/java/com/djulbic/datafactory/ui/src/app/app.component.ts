@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { State,states } from './model/State';
 import { ApiService } from './service/api-service.service';
@@ -7,6 +7,7 @@ import { DatabaseRequestConfig } from './model/DatabaseRequestConfig';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
+import { DatabaseHeaderComponent } from './components/database-header/database-header.component';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit{
   columnRows:ColumnSql[];
   mappedSQLTypesToDataLibraryMethods;
 
+  @ViewChild("header", {static: null}) header:DatabaseHeaderComponent;
 
   constructor(private api:ApiService, private _snackBar: MatSnackBar){
     api.getMappedSQLTypesToDataLibraryMethods().subscribe((data)=>{
@@ -45,7 +47,7 @@ export class AppComponent implements OnInit{
     let snackBarRef = this._snackBar.open('Message archived', null, {duration: 3600, panelClass:['blue-snackbar']});
     console.log(this.columnRows);
 
-    this.api.execute(this.columnRows).subscribe((data)=>{
+    this.api.execute(this.header.getDatabaseRequestConfig(), this.columnRows).subscribe((data)=>{
       console.log(data);
     });
   }
