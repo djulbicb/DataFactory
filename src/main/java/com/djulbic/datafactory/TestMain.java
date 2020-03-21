@@ -28,7 +28,7 @@ public class TestMain {
         String password = "";
 
         MySQLMetadataService service = new MySQLMetadataService(connectionUrl, username, password);
-        service.test("assigment", "category");
+
 
 //        MapMySQLTypesToDataLibrary map = new MapMySQLTypesToDataLibrary();
 //        Map<String, List<MethodDTO>> map1 = map.getMappedSQLTypesToDataLibraryMethods();
