@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.el.MethodNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -91,7 +92,7 @@ public class PopulateController {
     }
 
     @PostMapping("/getColumns")
-    public List<ColumnSql> getColumns(@RequestBody DatabaseRequestConfig databaseRequestConfig){
+    public List<ColumnSql> getColumns(@RequestBody DatabaseRequestConfig databaseRequestConfig) throws SQLException {
         System.out.println(databaseRequestConfig);
 
         List<ColumnSql> columns = mysqlProvider.getColumns(databaseRequestConfig.getDatabaseName(), databaseRequestConfig.getDatabaseTable());

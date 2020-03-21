@@ -3,8 +3,7 @@ package com.djulbic.datafactory.metadata.providers;
 import com.djulbic.datafactory.model.ColumnSql;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MySQLMetadataService {
     SQLExecutor executor = null;
@@ -44,12 +43,30 @@ public class MySQLMetadataService {
 
     }
 
-    public List<String> getForeignKeysColumns(String databaseName, String tableName, String columnName){
-        String sqlCommand = SQLCommands.getKeysByDbTableColumn(databaseName, tableName, columnName);
+    public Set<String> getForeignKeysColumns(String databaseName, String tableName) throws SQLException {
+        HashSet<String> set = new HashSet<>();
+        String sqlCommand = SQLCommands.getKeysByDbTableColumn(databaseName, tableName);
         executor.start();
-        List<String> listOfForeign = executor.executeAndGetResultSetBuilder(sqlCommand).getStringsAtIndex(5);
+        ResultSet resultSet = executor.executeAndGetResultSet(sqlCommand);
+        // SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_SCHEMA, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+        while (resultSet.next()){
+            String table_schema = resultSet.getString("TABLE_SCHEMA");
+            String table_name = resultSet.getString("TABLE_NAME");
+            String column_name = resultSet.getString("COLUMN_NAME");
+            String referenced_table_schema = resultSet.getString("REFERENCED_TABLE_SCHEMA");
+            String referenced_table_name = resultSet.getString("REFERENCED_TABLE_NAME");
+            String referenced_column_name = resultSet.getString("REFERENCED_COLUMN_NAME");
+
+            set.add(join(table_schema, table_name, column_name));
+            set.add(join(referenced_table_schema, referenced_table_name, referenced_column_name));
+        }
         executor.close();
-        return listOfForeign;
+
+        return set;
+    }
+
+    public String join(String s1, String s2, String s3){
+        return s1 + "|" + s2 + "|" + s3;
     }
 
     /**
@@ -59,12 +76,12 @@ public class MySQLMetadataService {
         return String.format("`%s`.`%s`", databaseName, tableName);
     }
 
-    public List<ColumnSql> getColumns(String databaseName, String tableName){
+    public List<ColumnSql> getColumns(String databaseName, String tableName) throws SQLException {
         String dbAndTableName = getJoinedDbAndTableNameAsString(databaseName, tableName);
         List<ColumnSql> columnSql = new ArrayList<>();
 
-        List<String> primaryColumns = getPrimaryColumns(databaseName, tableName);
-        System.out.println(">>>> " + primaryColumns);
+        List<String> primaryKeyColumns = getPrimaryColumns(databaseName, tableName);
+        Set<String> foreignKeyColumns = getForeignKeysColumns(databaseName, tableName);
 
         try {
             executor.start();
@@ -86,14 +103,14 @@ public class MySQLMetadataService {
 
                 ColumnSql column = new ColumnSql(columnName, columnType, columnTypeLength);
 
-                List<String> foreignKeysColumns = getForeignKeysColumns(databaseName, tableName, columnName);
-                if (primaryColumns.contains(columnName.toLowerCase())){
+                if (primaryKeyColumns.contains(columnName.toLowerCase())){
                     column.setPrimaryKey(true);
                 }
-                if (!foreignKeysColumns.isEmpty()){
+
+                String checkForForeighKey = join(databaseName, tableName, columnName.toLowerCase());
+                if (foreignKeyColumns.contains(checkForForeighKey)){
                     column.setForeignKey(true);
                 }
-
                 columnSql.add(column);
             }
             set.close();
