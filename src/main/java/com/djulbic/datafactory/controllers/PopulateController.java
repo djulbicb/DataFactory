@@ -3,7 +3,7 @@ package com.djulbic.datafactory.controllers;
 import com.djulbic.datafactory.DataLibraryMethodCallParser;
 import com.djulbic.datafactory.MapMySQLTypesToDataLibrary;
 import com.djulbic.datafactory.MethodCallParser;
-import com.djulbic.datafactory.metadata.providers.MySQLMetadataProvider;
+import com.djulbic.datafactory.metadata.providers.MySQLMetadataService;
 import com.djulbic.datafactory.model.ColumnSql;
 import com.djulbic.datafactory.model.DatabaseRequestConfig;
 import com.djulbic.datafactory.model.ExecuteRequestDTO;
@@ -17,7 +17,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import utils.StringUtility;
 
 import javax.el.MethodNotFoundException;
 import java.lang.reflect.InvocationTargetException;
@@ -35,7 +34,7 @@ public class PopulateController {
     DataLibraryMethodCallParser parser = new DataLibraryMethodCallParser();
 
     @Autowired
-    MySQLMetadataProvider mysqlProvider;
+    MySQLMetadataService mysqlProvider;
 
     @GetMapping("/getMappedSQLTypesToDataLibraryMethods")
     public Map<String, List<MethodDTO>> getMappedSQLTypesToDataLibraryMethods(){

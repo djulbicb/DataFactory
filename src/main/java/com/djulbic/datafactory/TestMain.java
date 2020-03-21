@@ -2,6 +2,7 @@ package com.djulbic.datafactory;
 
 
 
+import com.djulbic.datafactory.metadata.providers.MySQLMetadataService;
 import com.djulbic.datafactory.model.ColumnSql;
 
 import com.djulbic.datafactory.model.MethodDTO;
@@ -19,16 +20,26 @@ import java.util.Map;
 
 public class TestMain {
 
+
     public static void main(String[] args) throws SQLException, InvocationTargetException, IllegalAccessException {
 
-        MapMySQLTypesToDataLibrary map = new MapMySQLTypesToDataLibrary();
-        Map<String, List<MethodDTO>> map1 = map.getMappedSQLTypesToDataLibraryMethods();
-        System.out.println(map1);
+        String connectionUrl = "jdbc:mysql://localhost:3306";
+        String username = "root";
+        String password = "";
+
+        MySQLMetadataService service = new MySQLMetadataService(connectionUrl, username, password);
+        service.test("assigment", "category");
+
+//        MapMySQLTypesToDataLibrary map = new MapMySQLTypesToDataLibrary();
+//        Map<String, List<MethodDTO>> map1 = map.getMappedSQLTypesToDataLibraryMethods();
+//        System.out.println(map1);
 
 //        DataLibrary dl = DataLibrary.getEnglishData();
 //      DataLibraryMethodCallParser methodCallParser = new DataLibraryMethodCallParser();
 //        Object parse = methodCallParser.parse(dl, "getDoubleInRange(3,5)");
 //        System.out.println(parse);
+
+
 
 
     }
@@ -136,7 +147,6 @@ public class TestMain {
             String size = resultSet.getString("COLUMN_SIZE");
 
             ColumnSql column = new ColumnSql(name, type, size);
-            // System.out.println("Column name: [" + name + "];" + "type: [" + type + "]; size: [" + size + "]"); // Column name: [id]; type: [INT]; size: [10]
 
             columnSql.add(column);
         }

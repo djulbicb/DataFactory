@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MySQLMetadataProvider {
+public class MySQLMetadataService {
 
     private String connectionUrl;
     private String username;
     private String password;
 
-    public MySQLMetadataProvider(String connectionUrl, String username, String password) {
+    public MySQLMetadataService(String connectionUrl, String username, String password) {
         this.connectionUrl = connectionUrl;
         this.username = username;
         this.password = password;
@@ -86,18 +86,20 @@ public class MySQLMetadataProvider {
         return tables;
     }
 
+    public void getPrimaryColumns(String tableName){
+        String sqlCommand = SQLCommands.getPrimaryColumnOfTable(tableName);
+        List<String> columnNames = new ArrayList<>();
+    }
+
+
     public List<ColumnSql> getColumns(String databaseName, String tableName){
         String db = String.format("`%s`.`%s`", databaseName, tableName);
         List<ColumnSql> columnSql = new ArrayList<>();
 
         try {
             HikariDataSource dataSource = getDataSource();
-
             Connection connection = dataSource.getConnection();
             DatabaseMetaData metaData = connection.getMetaData();
-
-            // ResultSet importedKeys = metaData.getImportedKeys(null, null, tableName);
-            // metaData.getPrimaryKeys(null, null, tableName);
 
             String databaseAndTable = databaseName + "." + tableName;
             ResultSet resultSet = metaData.getColumns(null, null, databaseAndTable, null); // ovo je db
@@ -126,23 +128,6 @@ public class MySQLMetadataProvider {
                 columnSql.add(column);
             }
             System.out.println("-----------------");
-
-//            while (resultSet.next()) {
-//                Object object = resultSet.getObject("COLUMN_NAME");
-//                System.out.println(object.getClass());
-//                System.out.println(object);
-//                String name = resultSet.getString("COLUMN_NAME");
-//                String type = resultSet.getString("TYPE_NAME");
-//                int size = resultSet.getInt("COLUMN_SIZE");
-//
-//                type = type.replaceAll("UNSIGNED", "").trim();
-//
-//                ColumnSql column = new ColumnSql(name, type, size);
-//                if (!columnSql.contains(column)){
-//                    columnSql.add(column);
-//                }
-//
-//            }
             set.close();
             resultSet.close();
             connection.close();

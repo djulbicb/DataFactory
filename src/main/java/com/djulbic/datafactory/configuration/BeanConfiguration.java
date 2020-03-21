@@ -1,11 +1,10 @@
 package com.djulbic.datafactory.configuration;
 
 
-import com.djulbic.datafactory.metadata.providers.MySQLMetadataProvider;
+import com.djulbic.datafactory.metadata.providers.MySQLMetadataService;
 import data.DataLibrary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,12 +25,12 @@ public class BeanConfiguration implements WebMvcConfigurer {
 
 
    @Bean
-    public MySQLMetadataProvider database(){
+    public MySQLMetadataService database(){
        DataLibrary data = DataLibrary.getEnglishData();
        String connectionUrl = "jdbc:mysql://localhost:3306";
        String username = "root";
        String password = "";
-       MySQLMetadataProvider mysqlProvider = new MySQLMetadataProvider(connectionUrl, username, password);
+       MySQLMetadataService mysqlProvider = new MySQLMetadataService(connectionUrl, username, password);
        return mysqlProvider;
    }
 
