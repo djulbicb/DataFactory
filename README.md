@@ -14,7 +14,6 @@ UI connects with database (just mysql for now) and inserts data into database
 - back - use less connections when checking for primary and foreign key constraint
 - ui - allow disabling a field
 - ui - add clear method field in ui
-- ui - add on select database remove table selection 
 - ui/back - add logging history
 - ui/back - save/load
 - ui - add execute with with specified number of items

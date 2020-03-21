@@ -42,7 +42,7 @@ export class AppComponent implements OnInit{
       this.columnRows = data;
     });
   }
-  
+
   click(){
     let snackBarRef = this._snackBar.open('Message archived', null, {duration: 3600, panelClass:['blue-snackbar']});
     console.log(this.columnRows);
@@ -50,8 +50,13 @@ export class AppComponent implements OnInit{
     this.api.execute(this.header.getDatabaseRequestConfig(), this.columnRows).subscribe((data)=>{
       console.log(data);
     });
+
+
   }
 
+    clearRows(){
+console.log("clear");
+      this.columnRows = [];
+    }
 
-  
 }

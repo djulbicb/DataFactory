@@ -20,10 +20,11 @@ export class DatabaseHeaderComponent implements OnInit {
   selectedTable:string = "";
   inputColumns:Array<ColumnSql>;
 
+  @Output() emmitDatabaseChanged = new EventEmitter<String>();
   @Output() emmitShowColumns = new EventEmitter<DatabaseRequestConfig>();
 
   buttonBatchValues = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
-  
+
   constructor(private apiService:ApiService) { }
 
   ngOnInit() {
@@ -57,24 +58,27 @@ export class DatabaseHeaderComponent implements OnInit {
   }
 
   createConnection(){
-    
+
+  }
+
+  onDatabaseChange(){
+    let config = this.getDatabaseRequestConfig();
+    this.selectedTable="";
+    this.emmitDatabaseChanged.emit(this.selectedDatabase);
+
+    this.apiService.getTables(config).subscribe((data)=>{
+      this.tables = data;
+      console.log(data);
+    })
   }
 
   onTableChange(){
     let config = this.getDatabaseRequestConfig();
     this.apiService.getColumns(config).subscribe((data)=>{
-      console.log(data); 
+      console.log(data);
       this.emmitShowColumns.emit(config);
     })
   }
 
-  onDatabaseChange(){
-    let config = this.getDatabaseRequestConfig();
-    this.apiService.getTables(config).subscribe((data)=>{
-      this.tables = data;
-      console.log(data);
-      
-    })
-    
-  }
+
 }

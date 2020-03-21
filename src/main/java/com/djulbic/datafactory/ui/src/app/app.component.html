@@ -6,7 +6,7 @@
 <div class="row mb-1">
     <div class="col">
         <database-header
-          r #header (emmitShowColumns)="showTable($event)"></database-header>
+           #header (emmitShowColumns)="showTable($event)" (emmitDatabaseChanged)="clearRows($event)"></database-header>
     </div>
 </div>
 <!--

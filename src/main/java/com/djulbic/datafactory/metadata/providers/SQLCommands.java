@@ -7,8 +7,8 @@ public class SQLCommands {
     private static final String GET_COLUMNS_BY_TABLE_NAME = "SHOW COLUMNS FROM %s;";
     private static final String GET_KEYS_BY_DB_TABLE_COLUMN = "SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE (TABLE_SCHEMA='%s' OR REFERENCED_TABLE_SCHEMA='%s') AND (TABLE_NAME='%s' OR REFERENCED_TABLE_NAME='%s') AND (COLUMN_NAME='%s' OR REFERENCED_COLUMN_NAME='%s');";
 
-    public static String getPrimaryColumnOfTable(String tableName) {
-        return String.format(GET_PRIMARY_COLUMNS_OF_TABLE, tableName);
+    public static String getPrimaryColumnOfTable(String databaseTableName) {
+        return String.format(GET_PRIMARY_COLUMNS_OF_TABLE, databaseTableName);
     }
 
     public static String getShowDatabases(){
