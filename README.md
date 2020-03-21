@@ -11,7 +11,7 @@ UI connects with database (just mysql for now) and inserts data into database
 ### To do:
 - back - when parsing method call replace String param as Object[]
 - ui - in ui, on blur check if method exists and select/empty out text field
-- ui/back - check if primary, foreign, null
+- back - use less connections when checking for primary and foreign key constraint
 - ui - allow disabling a field
 - ui - add clear method field in ui
 - ui - add on select database remove table selection 

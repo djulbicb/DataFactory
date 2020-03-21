@@ -104,7 +104,6 @@ public class PopulateController {
     public String getData(@RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
         JSONTokener token = new JSONTokener(json);
 
-
         Object next = token.nextValue();
         Object o = parseJson(next);
         System.out.println(o);
@@ -128,7 +127,9 @@ public class PopulateController {
         System.out.println("getTables");
         System.out.println(requestConfig);
         System.out.println("----");
-        return mysqlProvider.getTables(requestConfig.getDatabaseName());
+        List<String> tables = mysqlProvider.getTables(requestConfig.getDatabaseName());
+
+        return tables;
     }
 
     @GetMapping("/getDataLibraryLanguages")

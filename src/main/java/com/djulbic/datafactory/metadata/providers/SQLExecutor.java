@@ -43,11 +43,19 @@ public class SQLExecutor {
         return (HikariDataSource)dataSourceBuilder.build();
     }
 
+    public ResultSet executeAndGetResultSet(String sqlCommand) {
+        try {
+            return statement.executeQuery(sqlCommand);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-    public ResultSet executeAndReturnResultSet(String sqlCommand) {
+    public ResultSetBuilder executeAndGetResultSetBuilder(String sqlCommand) {
         try {
             ResultSet rs = statement.executeQuery(sqlCommand);
-            return rs;
+            return new ResultSetBuilder(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -66,14 +74,11 @@ public class SQLExecutor {
 
     public boolean executeUpdate(List<String> insertQuery) {
         try {
-
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-
             for (String query : insertQuery) {
                 statement.executeUpdate(query);
             }
-
             statement.close();
             connection.close();
             dataSource.close();

@@ -1,8 +1,8 @@
 
 
 <div class="row mb-1 position-relative" (click)="click()">
-    
-    
+
+
     <div class="row-checkbox custom-control custom-checkbox center-vertical text-left">
         <mat-checkbox class="example-margin" [(ngModel)]="entry.checked">Checked</mat-checkbox>
         <!-- <input type="checkbox" class="custom-control-input" id="{{'check_' + entry.name}}" [(ngModel)]="entry.checked">
@@ -27,16 +27,16 @@
                        [formControl]="myControl"
                        [matAutocomplete]="auto"
                 >
-          
-                <mat-autocomplete #auto="matAutocomplete" 
-                    [displayWith]="getOptionText"  
+
+                <mat-autocomplete #auto="matAutocomplete"
+                    [displayWith]="getOptionText"
                     (optionSelected)='optionSelected($event.option.value)'
                 >
                   <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
                     {{option.methodName}}()
                   </mat-option>
                 </mat-autocomplete>
-          
+
               </mat-form-field>
 
         </div>
@@ -50,9 +50,8 @@
     <div class="col-1 p-0 border rounded">
         <table class="w-100 text-center center-vertical">
             <tr>
-                <td>PK</td>
-                <td>FK</td>
-                <td>AI</td>
+                <td [ngClass]="{'opacity-low': !entry.primaryKey}">PK</td>
+                <td [ngClass]="{'opacity-low': !entry.foreignKey}">FK</td>
             </tr>
         </table>
     </div>

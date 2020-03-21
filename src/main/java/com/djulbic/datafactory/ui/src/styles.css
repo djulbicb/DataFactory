@@ -20,6 +20,9 @@
   }
 
 
+.opacity-low{
+  opacity: 0.15;
+}
 
 
     /*
@@ -140,7 +143,7 @@ body {
 
 .theme-bg{
     background-color: #3c3a3a;
-    font-size: 110%; 
+    font-size: 110%;
     color:white;
     border-radius: .25rem !important;
     border: 1px solid
@@ -154,11 +157,11 @@ body {
 input, select{
     /* background-color: #3c3a3a !important;
     color: #fff !important; */
-    
+
 }
 
 
-.custom-control-label::before, 
+.custom-control-label::before,
 .custom-control-label::after {
     top: 0rem;
     width: 2.4rem;
@@ -209,13 +212,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     background-color: white;
     border-radius: 0.25rem;
     color: #333;
-    
+
 }
 .mat-form-field-infix{
     border: 0px;
     padding-left: 0.75em !important;
     text-shadow: 0px !important;
-    
+
 }
 
 .mat-form-field.mat-focused .mat-form-field-label{

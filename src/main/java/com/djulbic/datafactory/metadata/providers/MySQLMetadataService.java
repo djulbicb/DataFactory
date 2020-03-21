@@ -14,45 +14,42 @@ public class MySQLMetadataService {
     }
 
     public List<String> getDatabases()  {
-        List<String> databases = new ArrayList<>();
-
         executor.start();
-        ResultSet resultSet = executor.executeAndReturnResultSet(SQLCommands.getShowDatabases());
-        try {
-            while(resultSet.next()) {
-                String databaseName = resultSet.getString(1);
-                databases.add(databaseName);
-            }
-            resultSet.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        } finally {
-            executor.close();
-        }
+        List<String> databases = executor.executeAndGetResultSetBuilder(SQLCommands.getShowDatabases()).getStringsAtIndex(1);
+        executor.close();
         return databases;
     }
 
     public List<String> getTables(String databaseName) {
         executor.start();
-        List<String> tables = new ArrayList<>();
-        try {
-            ResultSet results = executor.executeAndReturnResultSet(SQLCommands.getTablesByDatabaseName(databaseName));
-            while(results.next()) {
-                String tableName = results.getString(1);
-                tables.add(tableName);
-            }
-            results.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        } finally {
-            executor.close();
-        }
+        List<String> tables = executor.executeAndGetResultSetBuilder(SQLCommands.getTablesByDatabaseName(databaseName)).getStringsAtIndex(1);
+        executor.close();
+
         return tables;
     }
 
-    public void getPrimaryColumns(String tableName){
-        String sqlCommand = SQLCommands.getPrimaryColumnOfTable(tableName);
-        List<String> columnNames = new ArrayList<>();
+    /**
+     * Get primary columns of a table.
+     * That information is located in result set at index 5
+     * @param databaseName
+     * @param tableName
+     * @return
+     */
+    public List<String> getPrimaryColumns(String databaseName, String tableName){
+        String sqlCommand = SQLCommands.getPrimaryColumnOfTable(getJoinedDbAndTableNameAsString(databaseName, tableName));
+        executor.start();
+        List<String> listOfPrimaryColumns = executor.executeAndGetResultSetBuilder(sqlCommand).getStringsAtIndex(5);
+        executor.close();
+        return listOfPrimaryColumns;
+
+    }
+
+    public List<String> getForeignKeysColumns(String databaseName, String tableName, String columnName){
+        String sqlCommand = SQLCommands.getKeysByDbTableColumn(databaseName, tableName, columnName);
+        executor.start();
+        List<String> listOfForeign = executor.executeAndGetResultSetBuilder(sqlCommand).getStringsAtIndex(5);
+        executor.close();
+        return listOfForeign;
     }
 
     /**
@@ -66,9 +63,12 @@ public class MySQLMetadataService {
         String dbAndTableName = getJoinedDbAndTableNameAsString(databaseName, tableName);
         List<ColumnSql> columnSql = new ArrayList<>();
 
+        List<String> primaryColumns = getPrimaryColumns(databaseName, tableName);
+        System.out.println(">>>> " + primaryColumns);
+
         try {
             executor.start();
-            ResultSet set = executor.executeAndReturnResultSet(SQLCommands.getColumnsByDatabaseAndTableName(dbAndTableName));
+            ResultSet set = executor.executeAndGetResultSet(SQLCommands.getColumnsByDatabaseAndTableName(dbAndTableName));
 
             List<String> names = new ArrayList<>();
             while (set.next()) {
@@ -81,11 +81,19 @@ public class MySQLMetadataService {
                     int end = columnType.indexOf(")");
 
                     columnTypeLength = columnType.substring(start+1,end);
-
                     columnType = columnType.substring(0,start);
                 }
 
                 ColumnSql column = new ColumnSql(columnName, columnType, columnTypeLength);
+
+                List<String> foreignKeysColumns = getForeignKeysColumns(databaseName, tableName, columnName);
+                if (primaryColumns.contains(columnName.toLowerCase())){
+                    column.setPrimaryKey(true);
+                }
+                if (!foreignKeysColumns.isEmpty()){
+                    column.setForeignKey(true);
+                }
+
                 columnSql.add(column);
             }
             set.close();
