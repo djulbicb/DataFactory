@@ -52,6 +52,7 @@
             <tr>
                 <td [ngClass]="{'opacity-low': !entry.primaryKey}">PK</td>
                 <td [ngClass]="{'opacity-low': !entry.foreignKey}">FK</td>
+                <td [ngClass]="{'opacity-low': !entry.nullable}">NULL</td>
             </tr>
         </table>
     </div>

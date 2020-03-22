@@ -5,14 +5,24 @@ import java.util.List;
 public class ExecuteRequestDTO {
     DatabaseRequestConfig config;
     List<ColumnSql> columns;
+    int insertQount;
 
     public ExecuteRequestDTO() {
 
     }
 
-    public ExecuteRequestDTO(DatabaseRequestConfig config, List<ColumnSql> columns) {
+    public ExecuteRequestDTO(DatabaseRequestConfig config, List<ColumnSql> columns, int insertQount) {
         this.config = config;
         this.columns = columns;
+        this.insertQount = insertQount;
+    }
+
+    public int getInsertQount() {
+        return insertQount;
+    }
+
+    public void setInsertQount(int insertQount) {
+        this.insertQount = insertQount;
     }
 
     public DatabaseRequestConfig getConfig() {
@@ -36,6 +46,7 @@ public class ExecuteRequestDTO {
         return "ExecuteRequestDTO{" +
                 "config=" + config +
                 ", columns=" + columns +
+                ", insertQount=" + insertQount +
                 '}';
     }
 }

@@ -38,12 +38,12 @@ urlGetColumns = this.url + '/api/getColumns'
 urlGetMappedSQLTypesToDataLibraryMethods = this.url + '/api/getMappedSQLTypesToDataLibraryMethods';
 urlExecute = this.url + '/api/execute';
 
-execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[]){
+execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[], insertQount:number){
   console.log("Execute");
   let request = new ExecuteRequestDTO();
   request.columns = data;
   request.config = requestConfig;
-  
+  request.insertQount = insertQount;
   console.log(request);
   return this.http.post(this.urlExecute, request);
 }

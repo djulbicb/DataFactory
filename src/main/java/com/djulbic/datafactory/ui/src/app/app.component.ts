@@ -43,15 +43,29 @@ export class AppComponent implements OnInit{
     });
   }
 
+  executeBatch(numberOfQueries){
+    let msg = "Hello " + numberOfQueries;
+    console.log("Hello " + numberOfQueries);
+    this._snackBar.open(msg, null, {duration: 3600, panelClass:['blue-snackbar']});
+
+    let databaseConfig = this.header.getDatabaseRequestConfig();
+    if(databaseConfig.databaseName !== "" && databaseConfig.databaseTable !==""){
+      this.api.execute(databaseConfig, this.columnRows, numberOfQueries).subscribe((data)=>{
+        console.log(data);
+      });
+    } else {
+      this._snackBar.open("Select database and table first.", null, {duration: 3600, panelClass:['info-snackbar']});
+    }
+    
+  }
+
   click(){
-    let snackBarRef = this._snackBar.open('Message archived', null, {duration: 3600, panelClass:['blue-snackbar']});
+    this._snackBar.open('Message archived', null, {duration: 3600, panelClass:['blue-snackbar']});
     console.log(this.columnRows);
 
-    this.api.execute(this.header.getDatabaseRequestConfig(), this.columnRows).subscribe((data)=>{
+    this.api.execute(this.header.getDatabaseRequestConfig(), this.columnRows, 1).subscribe((data)=>{
       console.log(data);
     });
-
-
   }
 
     clearRows(){

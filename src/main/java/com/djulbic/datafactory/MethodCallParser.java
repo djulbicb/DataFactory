@@ -6,10 +6,12 @@ import javax.el.MethodNotFoundException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public interface MethodCallParser {
-    Object parse(DataLibrary dataLibrary, String m);
+    Object parse(DataLibrary dataLibrary, String methodCall, String delimiter);
 
     default Method getMethodByName(String methodName, Class scanClass){
         List<Method> methods = new ArrayList<>();
@@ -38,29 +40,34 @@ public interface MethodCallParser {
         return methodCall;
     }
 
-    default List<String> getParametarExtracted(String tested){
+    default List<String> getParametarExtracted(String paramsAsString,  String delimeter){
         List<String> tokensList = new ArrayList<String>();
-        boolean inQuotes = false;
-        StringBuilder b = new StringBuilder();
-        for (char c : tested.toCharArray()) {
-            switch (c) {
-                case ',':
-                    if (inQuotes) {
-                        b.append(c);
-                    } else {
-                        tokensList.add(b.toString().trim());
-                        b = new StringBuilder();
-                    }
-                    break;
-                case '\"':
-                    inQuotes = !inQuotes;
-                default:
-                    b.append(c);
-                    break;
-            }
-        }
-        tokensList.add(b.toString().trim());
-        return tokensList;
+
+        String[] split =paramsAsString.split(Pattern.quote(delimeter));
+        List<String> strings = Arrays.asList(split);
+
+//        boolean inQuotes = false;
+//        StringBuilder b = new StringBuilder();
+//        for (char character : tested.toCharArray()) {
+//            String charAsStr = character + "";
+//            switch (charAsStr) {
+//                case delimeter:
+//                    if (inQuotes) {
+//                        b.append(charAsStr);
+//                    } else {
+//                        tokensList.add(b.toString().trim());
+//                        b = new StringBuilder();
+//                    }
+//                    break;
+//                case "\"":
+//                    inQuotes = !inQuotes;
+//                default:
+//                    b.append(charAsStr);
+//                    break;
+//            }
+//        }
+//        tokensList.add(b.toString().trim());
+        return strings;
     }
 
     default Object[] getParams(Method method, List<String> extractedParams){

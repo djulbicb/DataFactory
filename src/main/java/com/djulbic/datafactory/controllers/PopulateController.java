@@ -47,29 +47,48 @@ public class PopulateController {
         System.out.println(request);
         String databaseName = request.getConfig().getDatabaseName();
         String databaseTable = request.getConfig().getDatabaseTable();
+
+        List<String> insertStatements = new ArrayList<>();
+        int insertQount = request.getInsertQount();
+        for (int i = 0; i < insertQount; i++) {
+            insertStatements.add(getInsertQueryStatement(request));
+        }
+
+        for (String statement : insertStatements) {
+            System.out.println(statement);
+        }
+
+
+        //mysqlProvider.insertQuery(query);
+
+        return "sss";
+    }
+
+    private String getInsertQueryStatement(ExecuteRequestDTO request) {
+        String databaseName = request.getConfig().getDatabaseName();
+        String databaseTable = request.getConfig().getDatabaseTable();
         String dbTable = String.format("`%s`.`%s`", databaseName, databaseTable);
         String insertQuery = "INSERT INTO %s (%s) VALUES (%s);";
-
         List<String> columnNames = new ArrayList<>();
         List<Object> columnValues = new ArrayList<>();
-
         DataLibraryMetadata metadata = new DataLibraryMetadata();
 
         for (ColumnSql sql : request.getColumns()) {
-
             // Skip iteration if column is not checked for processing
             if (!sql.isChecked()) {
                 continue;
             }
-
             MethodDTO method = sql.getMethod();
-
             if (method != null){
                 String name = method.getMethodName();
                 String inputParametars = method.getInputParametars();
+                String inputDelimiter = method.getInputDelimiter();
+                if (inputDelimiter == null || inputDelimiter.isEmpty()){
+                    inputDelimiter = ",";
+                }
                 name = name + "(" + inputParametars + ")";
 
-                Object parseValue = parser.parse(data, name);
+                Object parseValue = parser.parse(data, name, inputDelimiter);
 
                 columnNames.add("`" + sql.getName() + "`");
 
@@ -78,8 +97,6 @@ public class PopulateController {
                 }else{
                     columnValues.add(parseValue);
                 }
-
-
             }
             System.out.println("-----" + sql.getName());
         }
@@ -89,11 +106,7 @@ public class PopulateController {
         String val = StringUtils.join(columnValues, ",");
 
         String query = String.format(insertQuery, dbTable, col, val);
-        System.out.println(query);
-
-        //mysqlProvider.insertQuery(query);
-
-        return "sss";
+        return query;
     }
 
     @PostMapping("/getColumns")
@@ -198,7 +211,7 @@ public class PopulateController {
             Method methodByName = getMethodByName(next.toString(), DataLibrary.class);
 
             MethodCallParser parser = new DataLibraryMethodCallParser();
-            return parser.parse(data, next.toString());
+            return parser.parse(data, next.toString(), ",");
             // return methodByName.invoke(data);
         }
     }

@@ -9,18 +9,16 @@ API service can receive any JSON object and fill it with data (Check example bel
 UI connects with database (just mysql for now) and inserts data into database 
 
 ### To do:
-- back - when parsing method call replace String param as Object[]
 - ui - in ui, on blur check if method exists and select/empty out text field
-- back - use less connections when checking for primary and foreign key constraint
-- ui - allow disabling a field
 - ui - add clear method field in ui
 - ui/back - add logging history
 - ui/back - save/load
-- ui - add execute with with specified number of items
 - ui/back - add pick language
 - ui - add specify connection
 - ui/back - add on error show message
 - ui - fix multiple fields being connected 
+- back - round to 2 decimal in datalibrary
+- back - join search for primary, foreign, nullable columns into one query
 
 <img src="./ui.PNG">
 

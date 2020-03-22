@@ -9,10 +9,10 @@ import java.util.List;
 
 public class DataLibraryMethodCallParser implements MethodCallParser{
     @Override
-    public Object parse(DataLibrary dataLibrary, String m){
-        String methodNameSubstr = getMethodNameSubstrFromString(m);
-        String paramSubstr = getMethodParamsSubstrFromString(m);
-        List<String> extractedParams = getParametarExtracted(paramSubstr);
+    public Object parse(DataLibrary dataLibrary, String methodCall, String delimiter){
+        String methodNameSubstr = getMethodNameSubstrFromString(methodCall);
+        String paramSubstr = getMethodParamsSubstrFromString(methodCall);
+        List<String> extractedParams = getParametarExtracted(paramSubstr, delimiter);
 
         System.out.println(methodNameSubstr);
         System.out.println(extractedParams);
@@ -28,7 +28,7 @@ public class DataLibraryMethodCallParser implements MethodCallParser{
             return invoke;
 
         }catch (Exception e){
-            throw new MethodNotFoundException("sss");
+            throw new MethodNotFoundException(methodCall);
         }
     }
 

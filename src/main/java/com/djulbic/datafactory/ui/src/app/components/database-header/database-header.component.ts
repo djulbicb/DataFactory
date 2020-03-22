@@ -22,6 +22,7 @@ export class DatabaseHeaderComponent implements OnInit {
 
   @Output() emmitDatabaseChanged = new EventEmitter<String>();
   @Output() emmitShowColumns = new EventEmitter<DatabaseRequestConfig>();
+  @Output() emmitExecute = new EventEmitter<String>();
 
   buttonBatchValues = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
 
@@ -53,8 +54,8 @@ export class DatabaseHeaderComponent implements OnInit {
     return config;
   }
 
-  batchQuery(numberOfQueries){
-    console.log(numberOfQueries);
+  execute(numberOfQueries){
+    this.emmitExecute.emit(numberOfQueries);
   }
 
   createConnection(){

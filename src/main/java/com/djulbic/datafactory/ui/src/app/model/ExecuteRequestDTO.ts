@@ -4,4 +4,5 @@ import { ColumnSql } from './ColumnSql';
 export class ExecuteRequestDTO{
     config:DatabaseRequestConfig;
     columns:ColumnSql[];
+    insertQount:number;
 }

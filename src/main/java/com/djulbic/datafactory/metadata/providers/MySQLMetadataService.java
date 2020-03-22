@@ -61,8 +61,15 @@ public class MySQLMetadataService {
             set.add(join(referenced_table_schema, referenced_table_name, referenced_column_name));
         }
         executor.close();
-
         return set;
+    }
+
+    private List<String> getNullableColumns(String databaseName, String tableName) {
+        String sqlCommand = SQLCommands.getGetColumnsNullableByDbAndTableName(databaseName, tableName);
+        executor.start();
+        List<String> listOfColumns = executor.executeAndGetResultSetBuilder(sqlCommand).getStringsAtIndex(1);
+        executor.close();
+        return listOfColumns;
     }
 
     public String join(String s1, String s2, String s3){
@@ -82,6 +89,7 @@ public class MySQLMetadataService {
 
         List<String> primaryKeyColumns = getPrimaryColumns(databaseName, tableName);
         Set<String> foreignKeyColumns = getForeignKeysColumns(databaseName, tableName);
+        List<String> nullableCollumns = getNullableColumns(databaseName, tableName);
 
         try {
             executor.start();
@@ -111,6 +119,11 @@ public class MySQLMetadataService {
                 if (foreignKeyColumns.contains(checkForForeighKey)){
                     column.setForeignKey(true);
                 }
+
+                if (nullableCollumns.contains(columnName.toLowerCase())){
+                    column.setNullable(true);
+                }
+
                 columnSql.add(column);
             }
             set.close();
@@ -121,6 +134,8 @@ public class MySQLMetadataService {
         return columnSql;
 
     }
+
+
 
     public boolean insertQuery(String insertQuery){
         List<String> emptyList = new ArrayList();
