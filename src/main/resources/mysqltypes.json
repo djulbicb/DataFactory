@@ -17,9 +17,9 @@
   "LONGNVARCHAR" : ["int", "string", "double", "float", "Object"],
   "LONGVARCHAR" : ["int", "string", "double", "float", "Object"],
   "TEXT" : ["int", "string", "double", "float", "Object"],
-  "DATE" : [""],
-  "TIME" : [""],
-  "TIMESTAMP" : [""],
+  "DATE" : ["temporal"],
+  "TIME" : ["temporal"],
+  "TIMESTAMP" : ["temporal"],
   "BINARY" : [""],
   "VARBINARY" : [""],
   "LONGVARBINARY" : [""],
@@ -38,6 +38,6 @@
   "NCLOB" : [""],
   "SQLXML" : [""],
   "REF_CURSOR" : [""],
-  "TIME_WITH_TIMEZONE" : [""],
-  "TIMESTAMP_WITH_TIMEZONE" :[""]
+  "TIME_WITH_TIMEZONE" : ["temporal"],
+  "TIMESTAMP_WITH_TIMEZONE" :["temporal"]
 }

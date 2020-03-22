@@ -1,6 +1,7 @@
 package com.djulbic.datafactory;
 
 import data.DataLibrary;
+import io.micrometer.core.instrument.util.StringEscapeUtils;
 
 import javax.el.MethodNotFoundException;
 import java.lang.reflect.Method;
@@ -94,7 +95,9 @@ public interface MethodCallParser {
                     methodParams[i] = Double.parseDouble(extractedParams.get(i));
                 } else if (type == String.class){
                     System.out.println("type - String");
-                    methodParams[i] = extractedParams.get(i);
+                    String s = extractedParams.get(i);
+
+                    methodParams[i] = s; //extractedParams.get(i);
                 } else if(parameter.isVarArgs()){
                     System.out.println("type - var args");
                     methodParams[i] = extractedParams.toArray();
@@ -110,4 +113,6 @@ public interface MethodCallParser {
         System.out.println("---");
         return methodParams;
     }
+
+
 }

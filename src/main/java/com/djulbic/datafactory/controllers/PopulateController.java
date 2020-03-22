@@ -71,6 +71,7 @@ public class PopulateController {
 //
 //    }
 
+        mysqlProvider.insertQuery(insertStatements);
 
         ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put("status", 200);
@@ -88,6 +89,7 @@ public class PopulateController {
         DataLibraryMetadata metadata = new DataLibraryMetadata();
 
         for (ColumnSql sql : request.getColumns()) {
+            String columnName = sql.getName();
             // Skip iteration if column is not checked for processing
             if (!sql.isChecked()) {
                 continue;
@@ -106,11 +108,17 @@ public class PopulateController {
 
                 columnNames.add("`" + sql.getName() + "`");
 
-                if(sql.getType().contains("VARCHAR")){
-                    columnValues.add("'" + parseValue + "'");
+                if (parseValue.getClass().equals(String.class)){
+                    columnValues.add("'" + escapeStringForMySQL(parseValue.toString()) + "'");
                 }else{
                     columnValues.add(parseValue);
                 }
+
+//                if(sql.getType().contains("VARCHAR")){
+//                    columnValues.add("'" + parseValue + "'");
+//                }else{
+//                    columnValues.add(parseValue);
+//                }
             }
             System.out.println("-----" + sql.getName());
         }
@@ -121,6 +129,24 @@ public class PopulateController {
 
         String query = String.format(insertQuery, dbTable, col, val);
         return query;
+    }
+
+    private String escapeStringForMySQL(String s) {
+        return s.replaceAll("\\\\", "\\\\\\")
+                .replaceAll("\b","\\b")
+                .replaceAll("\n","\\n")
+                .replaceAll("\r", "\\r")
+                .replaceAll("\t", "\\t")
+                .replaceAll("\\x1A", "\\Z")
+                .replaceAll("\\x00", "\\0")
+                .replaceAll("'", "\\'")
+                .replaceAll("\"", "\\\"");
+    }
+
+    private String escapeWildcardsForMySQL(String s) {
+        return escapeStringForMySQL(s)
+                .replaceAll("%", "\\%")
+                .replaceAll("_","\\_");
     }
 
     @PostMapping("/getColumns")

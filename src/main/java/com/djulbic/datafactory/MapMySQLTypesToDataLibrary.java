@@ -43,7 +43,12 @@ public class MapMySQLTypesToDataLibrary extends JsonResourceReader<Map> {
             String sqlType = entry.getKey();
             List<String> javaTypes = entry.getValue();
 
-            List<Method> methodsThatReturnType = metadata.getMethodsThatReturnType(javaTypes.toArray(new String[0]));
+            //List<Method> methodsThatReturnType = metadata.getMethodsThatReturnType(javaTypes.toArray(new String[0]));
+            List<Method> methodsThatReturnType = new ArrayList<>();
+            for (String javaType : javaTypes) {
+                methodsThatReturnType.addAll(metadata.getMethodsThatReturnType(javaType));
+            }
+            //metadata.getMethodsThatReturnType(javaTypes.toArray(new String[0]));
 
             List<MethodDTO> methodDTOS = new ArrayList<>();
             for (Method method : methodsThatReturnType) {

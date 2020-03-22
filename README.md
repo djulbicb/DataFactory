@@ -16,10 +16,11 @@ UI connects with database (just mysql for now) and inserts data into database
 - ui/back - add pick language
 - ui - add specify connection
 - ui/back - add on error show message
-- ui - fix multiple fields being connected 
-- back - round to 2 decimal in datalibrary
 - back - join search for primary, foreign, nullable columns into one query
 - ui - check if selection valid
+
+### To do testing scenarios
+- unique constraint, value already exist
 
 <img src="./ui.PNG">
 

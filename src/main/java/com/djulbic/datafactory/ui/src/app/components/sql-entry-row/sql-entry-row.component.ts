@@ -76,7 +76,9 @@ export class SqlEntryRowComponent implements OnInit {
     console.log(obj);
     
     this.selectedValue = obj;
-    this.entry.method = this.selectedValue;
+
+    this.entry.method = Object.assign({}, this.selectedValue);
+    //this.entry.method = this.selectedValue;
 
     if(obj.paramsCount > 0){
       this.ifShowDelimiterInput = true;
