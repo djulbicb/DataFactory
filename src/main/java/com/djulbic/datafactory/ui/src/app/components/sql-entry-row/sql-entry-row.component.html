@@ -26,9 +26,11 @@
                        matInput
                        [formControl]="myControl"
                        [matAutocomplete]="auto"
+                       #inputMethodName
+                       (blur)="updateMethodName()"
                 >
-
                 <mat-autocomplete #auto="matAutocomplete"
+                    
                     [displayWith]="getOptionText"
                     (optionSelected)='optionSelected($event.option.value)'
                 >

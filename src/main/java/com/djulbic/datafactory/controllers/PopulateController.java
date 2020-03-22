@@ -197,7 +197,7 @@ public class PopulateController {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonElement jsonElement = gson.toJsonTree(response);
-        String ss = "";
+
         //return gson.toJson(response);
 
 

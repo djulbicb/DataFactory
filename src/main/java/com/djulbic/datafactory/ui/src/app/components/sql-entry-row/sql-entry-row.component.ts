@@ -71,6 +71,10 @@ export class SqlEntryRowComponent implements OnInit {
     // console.log(this.inputDelimiter.nativeElement.value);
   }
 
+  update(){
+    console.log("update");
+  }
+
   optionSelected(obj:MethodDTO){
     console.log("sss");
     console.log(obj);
@@ -94,6 +98,17 @@ export class SqlEntryRowComponent implements OnInit {
       this.ifShowDelimiterInput = false;
     } 
   }
+
+  @ViewChild("inputMethodName", {static: null}) inputMethodName:ElementRef;
+  updateMethodName(){
+    console.log("updateMethodName");
+    if(this.selectedValue){
+      this.inputMethodName.nativeElement.value=this.selectedValue.methodName
+    } else{
+      this.inputMethodName.nativeElement.value = "";
+    }
+  }
+  
 }
 
 // https://stackoverflow.com/questions/55099125/angular-autocomplete-is-returning-value-as-object-object
