@@ -79,21 +79,14 @@ public class SQLExecutor {
             for (String query : insertQuery) {
                 statement.executeUpdate(query);
             }
-            statement.close();
-            connection.close();
-            dataSource.close();
-
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }  finally {
             try {
-                if (connection !=null){
-                    connection.close();
-                }
-                if (statement !=null){
-                    connection.close();
-                }
+                statement.close();
+                connection.close();
+                dataSource.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
