@@ -35,9 +35,8 @@
         </div>
 
         <div>
-            <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="selectedDatabase" (change)="changeLanguage()">
-                <option value="" selected disabled hidden>Choose language...</option>
-                <option *ngFor="let item of dataLibraryLanguages" value="{{item}}">{{item | titlecase}}</option>
+            <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="selectedLanguage">
+                <option [selected]="item==selectedLanguage" *ngFor="let item of dataLibraryLanguages" value="{{item}}">{{item | titlecase}}</option>
             </select>
         </div>
     </div>

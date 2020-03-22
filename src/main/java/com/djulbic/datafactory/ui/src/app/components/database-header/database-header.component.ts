@@ -19,6 +19,7 @@ export class DatabaseHeaderComponent implements OnInit {
   inputdatabases:Observable<any>;
   databases:Array<any>;
   selectedDatabase:string = "";
+  selectedLanguage:string = "ENGLISH";
   tables:Array<any>;
   selectedTable:string = "";
   inputColumns:Array<ColumnSql>;
@@ -51,11 +52,13 @@ export class DatabaseHeaderComponent implements OnInit {
       driver: "",
       url: "",
       username: "",
-      password: ""
+      password: "",
+      language: ""
     };
 
     config.databaseName = this.selectedDatabase;
     config.databaseTable = this.selectedTable;
+    config.language = this.selectedLanguage;
     return config;
   }
 

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.el.MethodNotFoundException;
+import javax.xml.crypto.Data;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -34,7 +35,6 @@ import java.util.stream.Collectors;
 @RestController
 public class PopulateController {
 
-    DataLibrary data = DataLibrary.getEnglishData();
     MapMySQLTypesToDataLibrary mapMySQLTypesToDataLibrary = new MapMySQLTypesToDataLibrary();
     DataLibraryMethodCallParser parser = new DataLibraryMethodCallParser();
 
@@ -87,6 +87,7 @@ public class PopulateController {
         List<String> columnNames = new ArrayList<>();
         List<Object> columnValues = new ArrayList<>();
         DataLibraryMetadata metadata = new DataLibraryMetadata();
+        DataLibrary data = DataLibraryMap.getDataLibrary(request.getConfig().getLanguage());
 
         for (ColumnSql sql : request.getColumns()) {
             String columnName = sql.getName();
@@ -160,14 +161,32 @@ public class PopulateController {
     }
 
     @PostMapping("/getdata")
-    public String getData(@RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
-        JSONTokener token = new JSONTokener(json);
+    public String getData(
+            @RequestBody(required = false) String json,
+            @RequestParam(required = false, defaultValue = "ENGLISH") String language)
+            throws InvocationTargetException, IllegalAccessException {
 
+        JSONTokener token = new JSONTokener(json);
         Object next = token.nextValue();
-        Object o = parseJson(next);
+        JsonParse parse = new JsonParse(DataLibraryMap.getDataLibrary(language));
+        Object o = parse.parseJson(next);
         System.out.println(o);
         return o.toString();
     }
+
+//    @PostMapping("/getdata/{x}")
+//    public List<String> getDataList(@RequestBody(required = false) String json, @PathVariable("x") int count) throws InvocationTargetException, IllegalAccessException {
+//        List<String> response = new ArrayList<>();
+//        JsonParse parse = new JsonParse(DataLibraryMap.getDataLibrary(language));
+//        for (int i = 0; i < count; i++) {
+//            JSONTokener token = new JSONTokener(json);
+//            Object next = token.nextValue();
+//            Object o = parseJson(next);
+//            response.add(o.toString());
+//        }
+//
+//        return response;
+//    }
 
     @GetMapping("/getDataLibraryMethod")
     public List<String> getDataLibraryMethod(){
@@ -197,18 +216,35 @@ public class PopulateController {
         return collect;
     }
 
-    @PostMapping("/getdata/{x}")
-    public List<String> getDataList(@RequestBody(required = false) String json, @PathVariable("x") int count) throws InvocationTargetException, IllegalAccessException {
-        List<String> response = new ArrayList<>();
+//      ([^(]*)   - up until (
+//      \((.*)\)  - between paranthesis
 
-        for (int i = 0; i < count; i++) {
-            JSONTokener token = new JSONTokener(json);
-            Object next = token.nextValue();
-            Object o = parseJson(next);
-            response.add(o.toString());
+    private String getMethodNameFromString(String methodName){
+        return "";
+    }
+
+    private Object[] getMethodParamsFromString(String methodName){
+        return null;
+    }
+
+}
+
+class DataLibraryMap {
+    static Map<String, DataLibrary> mapDataLibrary = new LinkedHashMap<>();
+
+    static DataLibrary getDataLibrary(String language){
+        if (!mapDataLibrary.containsKey(language)){
+            DataLibrary data = DataLibrary.getData(language);
+            mapDataLibrary.put(language, data);
         }
+        return mapDataLibrary.get(language);
+    }
+}
 
-        return response;
+class JsonParse{
+    private DataLibrary dataLibrary;
+    public JsonParse(DataLibrary dataLibrary) {
+        this.dataLibrary = dataLibrary;
     }
 
     public Object parseJson(Object next) throws InvocationTargetException, IllegalAccessException {
@@ -225,9 +261,7 @@ public class PopulateController {
                 Object o = parseJson(object);
                 nextObj.put(key, o);
             }
-
             return nextObj;
-
         }else if(next instanceof  JSONArray){
             System.out.println("Array");
             JSONArray array = (JSONArray) next;
@@ -251,22 +285,11 @@ public class PopulateController {
             Method methodByName = getMethodByName(next.toString(), DataLibrary.class);
 
             MethodCallParser parser = new DataLibraryMethodCallParser();
-            return parser.parse(data, next.toString(), ",");
+            return parser.parse(dataLibrary, next.toString(), ",");
+            //return parser.parse(data, next.toString(), ",");
             // return methodByName.invoke(data);
         }
     }
-
-//      ([^(]*)   - up until (
-//      \((.*)\)  - between paranthesis
-
-    private String getMethodNameFromString(String methodName){
-        return "";
-    }
-
-    private Object[] getMethodParamsFromString(String methodName){
-        return null;
-    }
-
 
     public Method getMethodByName(String methodName, Class scanClass){
         methodName = methodName.substring(0, methodName.indexOf("("));
@@ -279,6 +302,7 @@ public class PopulateController {
         }
         throw new MethodNotFoundException();
     }
+
 }
 
 //@RestController

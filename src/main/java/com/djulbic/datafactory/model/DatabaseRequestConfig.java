@@ -7,6 +7,15 @@ public class DatabaseRequestConfig {
     private String password;
     private String databaseName;
     private String databaseTable;
+    private String language;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     public String getDriver() {
         return driver;
@@ -65,6 +74,7 @@ public class DatabaseRequestConfig {
                 ", password='" + password + '\'' +
                 ", databaseName='" + databaseName + '\'' +
                 ", databaseTable='" + databaseTable + '\'' +
+                ", language='" + language + '\'' +
                 '}';
     }
 }

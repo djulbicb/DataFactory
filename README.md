@@ -10,14 +10,12 @@ UI connects with database (just mysql for now) and inserts data into database
 
 ### To do:
 - ui - in ui, on blur check if method exists and select/empty out text field
-- ui - add clear method field in ui
-- ui/back - add logging history
-- ui/back - save/load
-- ui/back - add pick language
+- ui/back - add presets history
 - ui - add specify connection
 - ui/back - add on error show message
 - back - join search for primary, foreign, nullable columns into one query
 - ui - check if selection valid
+- add to docker
 
 ### To do testing scenarios
 - unique constraint, value already exist
