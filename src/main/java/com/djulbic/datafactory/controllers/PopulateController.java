@@ -10,6 +10,9 @@ import com.djulbic.datafactory.model.ExecuteRequestDTO;
 import com.djulbic.datafactory.model.MethodDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import data.DataLibrary;
 import data.DataLibraryLanguage;
 import data.DataLibraryMetadata;
@@ -21,12 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.el.MethodNotFoundException;
-import javax.xml.crypto.Data;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -171,22 +172,37 @@ public class PopulateController {
         JsonParse parse = new JsonParse(DataLibraryMap.getDataLibrary(language));
         Object o = parse.parseJson(next);
         System.out.println(o);
+
         return o.toString();
     }
 
-//    @PostMapping("/getdata/{x}")
-//    public List<String> getDataList(@RequestBody(required = false) String json, @PathVariable("x") int count) throws InvocationTargetException, IllegalAccessException {
-//        List<String> response = new ArrayList<>();
-//        JsonParse parse = new JsonParse(DataLibraryMap.getDataLibrary(language));
-//        for (int i = 0; i < count; i++) {
-//            JSONTokener token = new JSONTokener(json);
-//            Object next = token.nextValue();
-//            Object o = parseJson(next);
-//            response.add(o.toString());
-//        }
-//
-//        return response;
-//    }
+    @PostMapping(value = "/getdata/{x}")
+    public String getDataList(
+            @RequestBody(required = false) String json,
+            @PathVariable("x") int count,
+            @RequestParam(required = false, defaultValue = "ENGLISH") String language) throws InvocationTargetException, IllegalAccessException {
+
+        DataLibrary data = DataLibraryMap.getDataLibrary(language);
+        JsonParse parse = new JsonParse(data);
+        List<Object> response = new ArrayList<>();
+        JSONArray array = new JSONArray();
+
+        for (int i = 0; i < count; i++) {
+            JSONTokener token = new JSONTokener(json);
+            Object next = token.nextValue();
+            Object o = parse.parseJson(next);
+            //response.add(o);
+            array.put(o);
+        }
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonElement jsonElement = gson.toJsonTree(response);
+        String ss = "";
+        //return gson.toJson(response);
+
+
+        return array.toString();
+    }
 
     @GetMapping("/getDataLibraryMethod")
     public List<String> getDataLibraryMethod(){
