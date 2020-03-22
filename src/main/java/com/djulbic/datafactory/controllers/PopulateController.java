@@ -8,6 +8,8 @@ import com.djulbic.datafactory.model.ColumnSql;
 import com.djulbic.datafactory.model.DatabaseRequestConfig;
 import com.djulbic.datafactory.model.ExecuteRequestDTO;
 import com.djulbic.datafactory.model.MethodDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import data.DataLibrary;
 import data.DataLibraryLanguage;
 import data.DataLibraryMetadata;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.el.MethodNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,8 +46,11 @@ public class PopulateController {
         return mapMySQLTypesToDataLibrary.getMappedSQLTypesToDataLibraryMethods();
     }
 
+    @Autowired
+    ObjectMapper mapper;
+
     @PostMapping("/execute")
-    public String execute(@RequestBody(required = false) ExecuteRequestDTO request){
+    public ObjectNode execute(@RequestBody(required = false) ExecuteRequestDTO request){
         System.out.println(request);
         String databaseName = request.getConfig().getDatabaseName();
         String databaseTable = request.getConfig().getDatabaseTable();
@@ -58,10 +65,17 @@ public class PopulateController {
             System.out.println(statement);
         }
 
+//    try{
+//        mysqlProvider.insertQuery(insertStatements);
+//    }catch (SQLIntegrityConstraintViolationException e){
+//
+//    }
 
-        //mysqlProvider.insertQuery(query);
 
-        return "sss";
+        ObjectNode objectNode = mapper.createObjectNode();
+        objectNode.put("status", 200);
+        objectNode.put("message", String.format("Added %s entries", insertQount));
+        return objectNode;
     }
 
     private String getInsertQueryStatement(ExecuteRequestDTO request) {

@@ -38,7 +38,7 @@ urlGetColumns = this.url + '/api/getColumns'
 urlGetMappedSQLTypesToDataLibraryMethods = this.url + '/api/getMappedSQLTypesToDataLibraryMethods';
 urlExecute = this.url + '/api/execute';
 
-execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[], insertQount:number){
+execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[], insertQount:number) :any{
   console.log("Execute");
   let request = new ExecuteRequestDTO();
   request.columns = data;

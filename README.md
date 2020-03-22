@@ -19,6 +19,7 @@ UI connects with database (just mysql for now) and inserts data into database
 - ui - fix multiple fields being connected 
 - back - round to 2 decimal in datalibrary
 - back - join search for primary, foreign, nullable columns into one query
+- ui - check if selection valid
 
 <img src="./ui.PNG">
 

@@ -51,7 +51,8 @@ export class AppComponent implements OnInit{
     let databaseConfig = this.header.getDatabaseRequestConfig();
     if(databaseConfig.databaseName !== "" && databaseConfig.databaseTable !==""){
       this.api.execute(databaseConfig, this.columnRows, numberOfQueries).subscribe((data)=>{
-        console.log(data);
+        console.log(data.message);
+        this._snackBar.open(data.message, null, {duration: 3600, panelClass:['info-snackbar']});
       });
     } else {
       this._snackBar.open("Select database and table first.", null, {duration: 3600, panelClass:['info-snackbar']});
