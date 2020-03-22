@@ -54,8 +54,13 @@ public class PopulateController {
         List<Object> columnValues = new ArrayList<>();
 
         DataLibraryMetadata metadata = new DataLibraryMetadata();
-        System.out.println("Execute");
+
         for (ColumnSql sql : request.getColumns()) {
+
+            // Skip iteration if column is not checked for processing
+            if (!sql.isChecked()) {
+                continue;
+            }
 
             MethodDTO method = sql.getMethod();
 
@@ -86,7 +91,7 @@ public class PopulateController {
         String query = String.format(insertQuery, dbTable, col, val);
         System.out.println(query);
 
-        mysqlProvider.insertQuery(query);
+        //mysqlProvider.insertQuery(query);
 
         return "sss";
     }
