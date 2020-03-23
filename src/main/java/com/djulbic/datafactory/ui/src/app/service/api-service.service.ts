@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { DatabaseRequestConfig } from '../model/DatabaseRequestConfig';
 import { ColumnSql } from '../model/ColumnSql';
 import { ExecuteRequestDTO } from '../model/ExecuteRequestDTO';
+import { DbConnection } from '../model/DbConnection';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,19 @@ urlgetDataLibraryLanguages = this.url + '/api/getDataLibraryLanguages';
 urlGetColumns = this.url + '/api/getColumns'
 urlGetMappedSQLTypesToDataLibraryMethods = this.url + '/api/getMappedSQLTypesToDataLibraryMethods';
 urlExecute = this.url + '/api/execute';
+urlAddNewConnection = this.url + '/api/addPresetConnection';
+urlGetPresetConnection = this.url + '/api/getPresetConnections';
+
+
+getPresetConnections(){
+  console.log('Sending request to get connection presets');
+  return this.http.get<DbConnection[]>(this.urlGetPresetConnection);
+}
+
+addNewConnection(dbConnectionInfo:DbConnection){
+  console.log('Sending request to add new connection preset');
+  return this.http.post(this.urlAddNewConnection, dbConnectionInfo);
+}
 
 execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[], insertQount:number) :any{
   console.log("Execute");
@@ -56,8 +70,9 @@ getConfig() {
   return this.http.get<any[]>(`${this.configUrl}`);
 }
 
-getDatabases() {
-  return this.http.get<any[]>(`${this.urlGetDatabases}`);
+getDatabases(databaseConnectionPreset:DbConnection) {
+  console.log("API SERVICE - getDatabases");
+  return this.http.post<any>(`${this.urlGetDatabases}`, databaseConnectionPreset);
 }
 
 getTables(requestConfig:DatabaseRequestConfig) {

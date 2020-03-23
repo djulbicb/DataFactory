@@ -1,5 +1,6 @@
 package com.djulbic.datafactory.metadata.providers;
 
+import com.djulbic.datafactory.model.DbConnection;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
@@ -18,48 +19,40 @@ public class SQLExecutor {
     Connection connection = null;
     Statement statement = null;
 
-    public SQLExecutor(String connectionUrl, String username, String password) {
-        this.connectionUrl = connectionUrl;
-        this.username = username;
-        this.password = password;
+    public SQLExecutor(DbConnection connection) {
+        this.connectionUrl = connection.getUrl();
+        this.username = connection.getUsername();
+        this.password = connection.getPassword();
     }
 
-    public void start() {
-        try {
-            this.dataSource = getDataSource();
-            this.connection = dataSource.getConnection();
-            this.statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void start() throws SQLException {
+        this.dataSource = getDataSource();
+        this.connection = dataSource.getConnection();
+        this.statement = connection.createStatement();
     }
 
     private HikariDataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306");//bojan?createDatabaseIfNotExist=true");
-        dataSourceBuilder.username("root");
-        dataSourceBuilder.password("");
+        dataSourceBuilder.url(this.connectionUrl);//bojan?createDatabaseIfNotExist=true");
+        dataSourceBuilder.username(this.username);
+        dataSourceBuilder.password(this.password);
+
+
+//        dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
+//        dataSourceBuilder.url("jdbc:mysql://localhost:3306");//bojan?createDatabaseIfNotExist=true");
+//        dataSourceBuilder.username("root");
+//        dataSourceBuilder.password("");
         return (HikariDataSource)dataSourceBuilder.build();
     }
 
-    public ResultSet executeAndGetResultSet(String sqlCommand) {
-        try {
-            return statement.executeQuery(sqlCommand);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public ResultSet executeAndGetResultSet(String sqlCommand) throws SQLException {
+        return statement.executeQuery(sqlCommand);
     }
 
-    public ResultSetBuilder executeAndGetResultSetBuilder(String sqlCommand) {
-        try {
-            ResultSet rs = statement.executeQuery(sqlCommand);
-            return new ResultSetBuilder(rs);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public ResultSetBuilder executeAndGetResultSetBuilder(String sqlCommand) throws SQLException {
+        ResultSet rs = statement.executeQuery(sqlCommand);
+        return new ResultSetBuilder(rs);
     }
 
     public void close() {
@@ -72,7 +65,7 @@ public class SQLExecutor {
         }
     }
 
-    public boolean executeUpdate(List<String> insertQuery) {
+    public boolean executeUpdate(List<String> insertQuery) throws SQLException {
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
@@ -81,7 +74,7 @@ public class SQLExecutor {
             }
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+           throw e;
         }  finally {
             try {
                 statement.close();
@@ -91,6 +84,5 @@ public class SQLExecutor {
                 e.printStackTrace();
             }
         }
-        return false;
     }
 }

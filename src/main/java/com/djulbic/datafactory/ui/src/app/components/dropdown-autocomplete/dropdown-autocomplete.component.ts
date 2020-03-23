@@ -6,6 +6,7 @@ import {FormControl} from '@angular/forms';
 import { State } from 'src/app/model/State';
 
 
+
 @Component({
   selector: 'dropdown-autocomplete',
   templateUrl: './dropdown-autocomplete.component.html',
@@ -18,18 +19,8 @@ export class DropdownAutocompleteComponent implements OnInit {
 
   ngOnInit() {
     this.input.subscribe((data)=>{
-      console.log(data);
       this.data = data;
     });
-
-    // this.input.subscribe((data)=>{
-    //   this.states$ = of(this.input); 
-    //   this.filter = new FormControl('');
-    //   this.filter$ = this.filter.valueChanges.pipe(startWith(''));
-    //   this.filteredStates$ = combineLatest(this.states$, this.filter$).pipe(
-    //     map(([states, filterString]) => states.filter(state => state.name.toLowerCase().indexOf(filterString.toLowerCase()) !== -1))
-    //   );
-    // });
   }
 
   states$: Observable<State[]>;
@@ -37,11 +28,4 @@ export class DropdownAutocompleteComponent implements OnInit {
   filter: FormControl;
   filter$: Observable<string>;
   console = console;
-
-  constructor() {
-    
-  }
-
-  
-
 }

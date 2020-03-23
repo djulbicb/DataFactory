@@ -1,0 +1,59 @@
+
+<!-- ADD CONNECTION MODAL WINDOW - START -->
+
+  <!-- The Modal -->
+
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h4 class="modal-title">Define connection</h4>
+    </div>
+
+    <!-- Modal body -->
+    <div class="modal-body">
+
+        <div class="form-group row">
+            <label for="example-text-input" class="col-2 col-form-label">Database:</label>
+            <div class="col-10">
+                <select class="custom-select" [(ngModel)]="data.driver">
+                    <option selected value="0">MySQL</option>
+                    <option value="1">H2 - not active</option>
+                    <option value="1">MariaDB - not active</option>
+                    <option value="2">Postgrel - not active</option>
+                    <option value="3">MSQL</option>
+                </select>
+            </div>
+          </div>
+
+        <div class="form-group row">
+            <label for="url" class="col-2 col-form-label">Url:</label>
+            <div class="col-10">
+              <input class="form-control" [(ngModel)]="data.url" name="url" type="text" value="" id="url">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="username" class="col-2 col-form-label">Username:</label>
+            <div class="col-10">
+              <input class="form-control" [(ngModel)]="data.username" name="username" type="search" value="" id="username">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="password" class="col-2 col-form-label">Password</label>
+            <div class="col-10">
+              <input class="form-control" [(ngModel)]="data.password" name="password" type="email" value="" id="password">
+            </div>
+          </div>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="modal-footer">
+        <div mat-dialog-actions>
+            <button class="btn btn-primary" (click)="onNoClick()">No Thanks</button>
+            <button class="btn btn-primary ml-1" (click)="verifyAndSend(data)" cdkFocusInitial>Save connection</button>
+            <small>*Username and password saved as raw text. Not safe for production</small>
+          </div>
+    </div>
+
+
+
+
+<!-- ADD CONNECTION MODAL WINDOW - END -->

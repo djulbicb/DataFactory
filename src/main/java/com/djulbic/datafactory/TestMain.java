@@ -27,7 +27,7 @@ public class TestMain {
         String username = "root";
         String password = "";
 
-        MySQLMetadataService service = new MySQLMetadataService(connectionUrl, username, password);
+//        MySQLMetadataService service = new MySQLMetadataService(connectionUrl, username, password);
 
 
 //        MapMySQLTypesToDataLibrary map = new MapMySQLTypesToDataLibrary();

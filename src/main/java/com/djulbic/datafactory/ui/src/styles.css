@@ -276,3 +276,7 @@ body{
   background: #138496;
   color: white;
 }
+
+.modal-body{
+  width: 600px;
+}

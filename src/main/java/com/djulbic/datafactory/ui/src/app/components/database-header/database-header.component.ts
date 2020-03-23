@@ -1,9 +1,18 @@
-import { Component, OnInit, Output, Input, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Output, Input, EventEmitter, ViewChild, ElementRef, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/service/api-service.service';
 import { DatabaseRequestConfig } from 'src/app/model/DatabaseRequestConfig';
 import { ColumnSql } from 'src/app/model/ColumnSql';
 import { MatSnackBar } from '@angular/material';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { ModalDbConnectionComponent } from '../modal-db-connection/modal-db-connection.component';
+import { DbConnection } from 'src/app/model/DbConnection';
+
+export interface DialogData {
+  animal: string;
+  name: string;
+}
+
 
 @Component({
   selector: 'database-header',
@@ -11,20 +20,22 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['./database-header.component.css']
 })
 export class DatabaseHeaderComponent implements OnInit {
+  selectedDatabase:string = "";
+  selectedLanguage:string = "ENGLISH";
+  selectedConnectionPreset:DbConnection;
 
   @ViewChild("inputInsertCount", {static:null}) inputInsertCount:ElementRef;
-
   dataLibraryLanguages:Array<string>;
 
   inputdatabases:Observable<any>;
   databases:Array<any>;
-  selectedDatabase:string = "";
-  selectedLanguage:string = "ENGLISH";
   tables:Array<any>;
   selectedTable:string = "";
   inputColumns:Array<ColumnSql>;
 
   autoExecute:boolean = true;
+
+  presetConnections:DbConnection[];
 
   @Output() emmitDatabaseChanged = new EventEmitter<String>();
   @Output() emmitShowColumns = new EventEmitter<DatabaseRequestConfig>();
@@ -32,16 +43,61 @@ export class DatabaseHeaderComponent implements OnInit {
 
   buttonBatchValues = [1, 5, 10, 25, 50, 100, 250, 500, 1000];
 
-  constructor(private apiService:ApiService, private _snackBar: MatSnackBar) { }
+  constructor(
+    private apiService:ApiService,
+    private _snackBar: MatSnackBar,
+    public dialog: MatDialog
+) { }
+
+  driver: "";
+  username: "";
+  password: "";
+  url:"";
+
+  openDialog(): void {
+    let db:DbConnection = {
+      driver: "",
+      username: "",
+      password: "",
+      url:""
+    }
+    const dialogRef = this.dialog.open(ModalDbConnectionComponent, {
+      width: '650px',
+      data: {
+        driver: this.driver,
+        username: this.username,
+        password: this.password,
+        url: this.url
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dbConnectionInfo => {
+      console.log('The dialog was closed');
+      if(dbConnectionInfo){
+        this.apiService.addNewConnection(dbConnectionInfo).subscribe((data)=>{
+          console.log("sss");
+        });
+      }
+    });
+  }
+
+  changeConnection(event){
+    console.log("Connection changed");
+    console.log(this.selectedConnectionPreset);
+    console.log(event);
+    this.apiService.getDatabases(this.selectedConnectionPreset).subscribe((data)=>{
+      this.databases = data;
+    })
+  }
 
   ngOnInit() {
-    this.inputdatabases = this.apiService.getDatabases();
-
     this.apiService.getDataLibraryLanguages().subscribe((data)=>{
       this.dataLibraryLanguages = data;
     });
-    this.apiService.getDatabases().subscribe((data)=>{
-      this.databases = data;
+
+    this.apiService.getPresetConnections().subscribe((data)=>{
+      console.log(data);
+      this.presetConnections = data;
     })
   }
 
@@ -50,9 +106,9 @@ export class DatabaseHeaderComponent implements OnInit {
       databaseName: "",
       databaseTable: "",
       driver: "",
-      url: "",
-      username: "",
-      password: "",
+      url: this.selectedConnectionPreset.url,
+      username: this.selectedConnectionPreset.username,
+      password: this.selectedConnectionPreset.password,
       language: ""
     };
 
@@ -97,6 +153,4 @@ export class DatabaseHeaderComponent implements OnInit {
       this.emmitShowColumns.emit(config);
     })
   }
-
-
 }

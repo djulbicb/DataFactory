@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TestComponent } from './test.component';
+import { ModalDbConnectionComponent } from './modal-db-connection.component';
 
-describe('TestComponent', () => {
-  let component: TestComponent;
-  let fixture: ComponentFixture<TestComponent>;
+describe('ModalDbConnectionComponent', () => {
+  let component: ModalDbConnectionComponent;
+  let fixture: ComponentFixture<ModalDbConnectionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TestComponent ]
+      declarations: [ ModalDbConnectionComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TestComponent);
+    fixture = TestBed.createComponent(ModalDbConnectionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

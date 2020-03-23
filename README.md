@@ -9,11 +9,8 @@ API service can receive any JSON object and fill it with data (Check example bel
 UI connects with database (just mysql for now) and inserts data into database 
 
 ### To do:
-- ui - in ui, on blur check if method exists and select/empty out text field
 - ui/back - add presets history
-- ui - add specify connection
 - ui/back - add on error show message
-- back - join search for primary, foreign, nullable columns into one query
 - ui - check if selection valid
 - add to docker
 

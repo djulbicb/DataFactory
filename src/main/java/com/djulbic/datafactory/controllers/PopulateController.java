@@ -4,10 +4,7 @@ import com.djulbic.datafactory.DataLibraryMethodCallParser;
 import com.djulbic.datafactory.MapMySQLTypesToDataLibrary;
 import com.djulbic.datafactory.MethodCallParser;
 import com.djulbic.datafactory.metadata.providers.MySQLMetadataService;
-import com.djulbic.datafactory.model.ColumnSql;
-import com.djulbic.datafactory.model.DatabaseRequestConfig;
-import com.djulbic.datafactory.model.ExecuteRequestDTO;
-import com.djulbic.datafactory.model.MethodDTO;
+import com.djulbic.datafactory.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
@@ -20,10 +17,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.el.MethodNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -40,18 +39,45 @@ public class PopulateController {
     DataLibraryMethodCallParser parser = new DataLibraryMethodCallParser();
 
     @Autowired
-    MySQLMetadataService mysqlProvider;
+    ObjectMapper mapper;
+    @Autowired
+    ConnectionManager manager;
 
     @GetMapping("/getMappedSQLTypesToDataLibraryMethods")
     public Map<String, List<MethodDTO>> getMappedSQLTypesToDataLibraryMethods(){
         return mapMySQLTypesToDataLibrary.getMappedSQLTypesToDataLibraryMethods();
     }
 
-    @Autowired
-    ObjectMapper mapper;
+
+
+    static int i = 0;
+
+    @GetMapping("/test")
+    public String test() throws IOException, ParseException {
+        DbConnection connection = new DbConnection();
+        connection.setDriver("sss" + i++);
+        connection.setUrl("sss" + i++);
+        connection.setPassword("sss" + i++);
+        manager.saveConnection(connection);
+        return "sss";
+    }
+
+    @PostMapping("/addPresetConnection")
+    public String addNewConnection(
+            @RequestBody(required = false) DbConnection dbConnection) throws IOException, ParseException {
+        manager.saveConnection(dbConnection);
+        return "sss";
+    }
+
+    @GetMapping("/getPresetConnections")
+    public String getNewConnection() throws IOException, ParseException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonElement jsonElement = gson.toJsonTree(manager.getConnections());
+        return jsonElement.toString();
+    }
 
     @PostMapping("/execute")
-    public ObjectNode execute(@RequestBody(required = false) ExecuteRequestDTO request){
+    public ObjectNode execute(@RequestBody(required = false) ExecuteRequestDTO request) throws SQLException {
         System.out.println(request);
         String databaseName = request.getConfig().getDatabaseName();
         String databaseTable = request.getConfig().getDatabaseTable();
@@ -71,7 +97,7 @@ public class PopulateController {
 //    }catch (SQLIntegrityConstraintViolationException e){
 //
 //    }
-
+        MySQLMetadataService mysqlProvider = new MySQLMetadataService(request.getConfig());
         mysqlProvider.insertQuery(insertStatements);
 
         ObjectNode objectNode = mapper.createObjectNode();
@@ -155,7 +181,8 @@ public class PopulateController {
     public List<ColumnSql> getColumns(@RequestBody DatabaseRequestConfig databaseRequestConfig) throws SQLException {
         System.out.println(databaseRequestConfig);
 
-        List<ColumnSql> columns = mysqlProvider.getColumns(databaseRequestConfig.getDatabaseName(), databaseRequestConfig.getDatabaseTable());
+        MySQLMetadataService mysqlProvider = new MySQLMetadataService(databaseRequestConfig);
+        List<ColumnSql> columns = mysqlProvider.getColumns();
         System.out.println(columns);
 
         return columns;
@@ -211,17 +238,21 @@ public class PopulateController {
         return metadata.getExposedMethods().stream().map(method -> method.getName()).collect(Collectors.toList());
     }
 
-    @GetMapping("/getDatabases")
-    public List<String> getDataBases(){
+    @PostMapping("/getDatabases")
+    public List<String> getDataBases(
+            @RequestBody(required = false) DatabaseRequestConfig requestConfig
+    ) throws SQLException {
+        MySQLMetadataService mysqlProvider = new MySQLMetadataService(requestConfig);
         return mysqlProvider.getDatabases();
     }
 
     @PostMapping("/getTables")
-    public List<String> getDataBasesTables(@RequestBody DatabaseRequestConfig requestConfig){
+    public List<String> getDataBasesTables(@RequestBody DatabaseRequestConfig requestConfig) throws SQLException {
         System.out.println("getTables");
         System.out.println(requestConfig);
         System.out.println("----");
-        List<String> tables = mysqlProvider.getTables(requestConfig.getDatabaseName());
+        MySQLMetadataService mysqlProvider = new MySQLMetadataService(requestConfig);
+        List<String> tables = mysqlProvider.getTables();
 
         return tables;
     }

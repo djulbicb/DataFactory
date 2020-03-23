@@ -11,23 +11,23 @@ import {FormControl} from '@angular/forms';
 import { State,states } from './model/State';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DropdownAutocompleteComponent } from './components/dropdown-autocomplete/dropdown-autocomplete.component';
-import { TestComponent } from './components/test/test.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DatabaseHeaderComponent } from './components/database-header/database-header.component';
 import { LogoHeaderComponent } from './components/logo-header/logo-header.component';
 import { SqlEntryRowComponent } from './components/sql-entry-row/sql-entry-row.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatSnackBarModule} from '@angular/material/snack-bar'; 
-import {MatSelectModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatCheckboxModule } from '@angular/material';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSelectModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatDialogModule } from '@angular/material';
+import { ModalDbConnectionComponent } from './components/modal-db-connection/modal-db-connection.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DropdownAutocompleteComponent,
     DatabaseHeaderComponent,
-    TestComponent,
     LogoHeaderComponent,
-    SqlEntryRowComponent
+    SqlEntryRowComponent,
+    ModalDbConnectionComponent
   ],
   imports: [
     BrowserModule,
@@ -41,13 +41,15 @@ import {MatSelectModule, MatAutocompleteModule, MatFormFieldModule, MatInputModu
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatDialogModule
   ],
+  entryComponents:[ ModalDbConnectionComponent ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { 
+export class AppModule {
 
-  
+
 
 }
