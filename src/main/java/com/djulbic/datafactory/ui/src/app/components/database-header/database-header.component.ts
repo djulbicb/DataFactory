@@ -7,6 +7,8 @@ import { MatSnackBar } from '@angular/material';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ModalDbConnectionComponent } from '../modal-db-connection/modal-db-connection.component';
 import { DbConnection } from 'src/app/model/DbConnection';
+import { SnackBarService } from 'src/app/service/snack-bar-service.service';
+
 
 export interface DialogData {
   animal: string;
@@ -45,7 +47,7 @@ export class DatabaseHeaderComponent implements OnInit {
 
   constructor(
     private apiService:ApiService,
-    private _snackBar: MatSnackBar,
+    private snackService:SnackBarService,
     public dialog: MatDialog
 ) { }
 

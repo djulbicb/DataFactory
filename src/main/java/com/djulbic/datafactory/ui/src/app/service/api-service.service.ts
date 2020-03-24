@@ -10,6 +10,7 @@ import { DatabaseRequestConfig } from '../model/DatabaseRequestConfig';
 import { ColumnSql } from '../model/ColumnSql';
 import { ExecuteRequestDTO } from '../model/ExecuteRequestDTO';
 import { DbConnection } from '../model/DbConnection';
+import { SnackBarService } from './snack-bar-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,9 @@ import { DbConnection } from '../model/DbConnection';
 export class ApiService {
 
 
-constructor(private http:HttpClient) { }
+constructor(
+  private http:HttpClient, 
+  private snack:SnackBarService) { }
 
 init(){
   console.log("Startup");
@@ -44,12 +47,16 @@ urlGetPresetConnection = this.url + '/api/getPresetConnections';
 
 getPresetConnections(){
   console.log('Sending request to get connection presets');
-  return this.http.get<DbConnection[]>(this.urlGetPresetConnection);
+  return this.http.get<DbConnection[]>(this.urlGetPresetConnection).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );;
 }
 
 addNewConnection(dbConnectionInfo:DbConnection){
   console.log('Sending request to add new connection preset');
-  return this.http.post(this.urlAddNewConnection, dbConnectionInfo);
+  return this.http.post(this.urlAddNewConnection, dbConnectionInfo).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );;
 }
 
 execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[], insertQount:number) :any{
@@ -59,52 +66,70 @@ execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[], insertQount:numbe
   request.config = requestConfig;
   request.insertQount = insertQount;
   console.log(request);
-  return this.http.post(this.urlExecute, request);
+  return this.http.post(this.urlExecute, request).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );;
 }
 
 getMappedSQLTypesToDataLibraryMethods(){
-  return this.http.get<any>(this.urlGetMappedSQLTypesToDataLibraryMethods);
+  return this.http.get<any>(this.urlGetMappedSQLTypesToDataLibraryMethods).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );;
 }
 
 getConfig() {
-  return this.http.get<any[]>(`${this.configUrl}`);
+  return this.http.get<any[]>(`${this.configUrl}`).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );;
 }
 
 getDatabases(databaseConnectionPreset:DbConnection) {
   console.log("API SERVICE - getDatabases");
-  return this.http.post<any>(`${this.urlGetDatabases}`, databaseConnectionPreset);
+  return this.http.post<any>(`${this.urlGetDatabases}`, databaseConnectionPreset).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );
 }
 
 getTables(requestConfig:DatabaseRequestConfig) {
   console.log("API SERVICE - getTables");
   console.log(requestConfig);
-  return this.http.post<string[]>(`${this.urlGetTables}`, requestConfig);
+  return this.http.post<string[]>(`${this.urlGetTables}`, requestConfig).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );;
 }
 
 getColumns(requestConfig:DatabaseRequestConfig){
   console.log("API SERVICE - getColumns");
   console.log(requestConfig);
-  return this.http.post<ColumnSql[]>(`${this.urlGetColumns}`, requestConfig);
+  return this.http.post<ColumnSql[]>(`${this.urlGetColumns}`, requestConfig).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );;
 }
 
 getDataLibraryLanguages(){
-  return this.http.get<any[]>(`${this.urlgetDataLibraryLanguages}`);
+  return this.http.get<any[]>(`${this.urlgetDataLibraryLanguages}`).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );
 }
 
-private handleError(error: HttpErrorResponse) {
+private handleError(error: HttpErrorResponse, snack:SnackBarService) {
   if (error.error instanceof ErrorEvent) {
     // A client-side or network error occurred. Handle it accordingly.
-    console.error('An error occurred:', error.error.message);
+    console.error('Bojan - An error occurred:', error.error.message);
   } else {
     // The backend returned an unsuccessful response code.
     // The response body may contain clues as to what went wrong,
     console.error(
-      `Backend returned code ${error.status}, ` +
+      `Bojan - Backend returned code ${error.status}, ` +
       `body was: ${error.error}`);
   }
+  
+  let trace = error.error.trace;
+  let message = trace.substring(0, trace.indexOf("\r\n"));;
+  snack.showError(message);
   // return an observable with a user-facing error message
   return throwError(
-    'Something bad happened; please try again later.');
+    'Bojan - Something bad happened; please try again later.');
 };
 
 

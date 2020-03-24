@@ -10,7 +10,6 @@ UI connects with database (just mysql for now) and inserts data into database
 
 ### To do:
 - ui/back - add presets history
-- ui/back - add on error show message
 - ui - check if selection valid
 - add to docker
 

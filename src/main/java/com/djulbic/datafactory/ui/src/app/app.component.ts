@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
 import { DatabaseHeaderComponent } from './components/database-header/database-header.component';
+import { SnackBarService } from './service/snack-bar-service.service';
 
 
 @Component({
@@ -23,7 +24,9 @@ export class AppComponent implements OnInit{
 
   @ViewChild("header", {static: null}) header:DatabaseHeaderComponent;
 
-  constructor(private api:ApiService, private _snackBar: MatSnackBar){
+  constructor(private api:ApiService, 
+              private snackService:SnackBarService
+              ){
     api.getMappedSQLTypesToDataLibraryMethods().subscribe((data)=>{
       this.mappedSQLTypesToDataLibraryMethods = data;
       console.log(this.mappedSQLTypesToDataLibraryMethods);
@@ -46,22 +49,21 @@ export class AppComponent implements OnInit{
   executeBatch(numberOfQueries){
     let msg = "Hello " + numberOfQueries;
     console.log("Hello " + numberOfQueries);
-    this._snackBar.open(msg, null, {duration: 3600, panelClass:['blue-snackbar']});
+    
 
     let databaseConfig = this.header.getDatabaseRequestConfig();
     if(databaseConfig.databaseName !== "" && databaseConfig.databaseTable !==""){
       this.api.execute(databaseConfig, this.columnRows, numberOfQueries).subscribe((data)=>{
         console.log(data.message);
-        this._snackBar.open(data.message, null, {duration: 3600, panelClass:['info-snackbar']});
+        this.snackService.showInfo(data.message);
       });
     } else {
-      this._snackBar.open("Select database and table first.", null, {duration: 3600, panelClass:['info-snackbar']});
+      this.snackService.showInfo("Select database and table first");
     }
     
   }
 
   click(){
-    this._snackBar.open('Message archived', null, {duration: 3600, panelClass:['blue-snackbar']});
     console.log(this.columnRows);
 
     this.api.execute(this.header.getDatabaseRequestConfig(), this.columnRows, 1).subscribe((data)=>{

@@ -329,12 +329,18 @@ class JsonParse{
         } else{
             System.out.println("Something else ---");
             System.out.println(next);
-            Method methodByName = getMethodByName(next.toString(), DataLibrary.class);
 
-            MethodCallParser parser = new DataLibraryMethodCallParser();
-            return parser.parse(dataLibrary, next.toString(), ",");
-            //return parser.parse(data, next.toString(), ",");
-            // return methodByName.invoke(data);
+            if (next.toString().contains("(") && next.toString().contains(")")){
+                Method methodByName = getMethodByName(next.toString(), DataLibrary.class);
+                MethodCallParser parser = new DataLibraryMethodCallParser();
+                return parser.parse(dataLibrary, next.toString(), ",");
+                //return parser.parse(data, next.toString(), ",");
+                // return methodByName.invoke(data);
+            }else{
+                return next.toString();
+            }
+
+
         }
     }
 

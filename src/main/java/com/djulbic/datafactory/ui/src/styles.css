@@ -267,13 +267,18 @@ body{
     border-right: 5px solid #333;
 }
 
-.blue-snackbar{
+.success-snackbar{
     background: #0069d9;
     color: white;
 }
 
 .info-snackbar{
   background: #138496;
+  color: white;
+}
+
+.error-snackbar{
+  background: #f55;
   color: white;
 }
 
