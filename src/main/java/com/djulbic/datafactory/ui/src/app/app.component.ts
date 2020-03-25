@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
 import { Observable } from 'rxjs';
 import { State,states } from './model/State';
 import { ApiService } from './service/api-service.service';
@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
 import { DatabaseHeaderComponent } from './components/database-header/database-header.component';
 import { SnackBarService } from './service/snack-bar-service.service';
+import { SqlEntryRowComponent } from './components/sql-entry-row/sql-entry-row.component';
 
 
 @Component({
@@ -23,6 +24,7 @@ export class AppComponent implements OnInit{
   mappedSQLTypesToDataLibraryMethods;
 
   @ViewChild("header", {static: null}) header:DatabaseHeaderComponent;
+  @ViewChildren(SqlEntryRowComponent) sqlEntryRows:QueryList<SqlEntryRowComponent>;
 
   constructor(private api:ApiService, 
               private snackService:SnackBarService
@@ -47,8 +49,17 @@ export class AppComponent implements OnInit{
   }
 
   executeBatch(numberOfQueries){
-    let msg = "Hello " + numberOfQueries;
-    console.log("Hello " + numberOfQueries);
+    let invalidRows = [];
+    this.sqlEntryRows.forEach(row=>{
+      if(!row.isValid()){
+        invalidRows.push(row.entry.name);
+      }
+    });
+
+    if(invalidRows.length > 0){
+      this.snackService.showError("Check following rows " + invalidRows);
+      return;
+    }
     
 
     let databaseConfig = this.header.getDatabaseRequestConfig();

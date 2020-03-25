@@ -1,6 +1,7 @@
 package com.djulbic.datafactory.controllers;
 
 import com.djulbic.datafactory.DataLibraryMethodCallParser;
+import com.djulbic.datafactory.DatabaseDrivers;
 import com.djulbic.datafactory.MapMySQLTypesToDataLibrary;
 import com.djulbic.datafactory.MethodCallParser;
 import com.djulbic.datafactory.metadata.providers.MySQLMetadataService;
@@ -48,7 +49,12 @@ public class PopulateController {
         return mapMySQLTypesToDataLibrary.getMappedSQLTypesToDataLibraryMethods();
     }
 
-
+    @GetMapping("/getDatabaseDrivers")
+    public List<DatabaseDrivers> getDatabaseDrivers(){
+        List<DatabaseDrivers> drivers = Arrays.asList(DatabaseDrivers.values());
+        List<String> collect = drivers.stream().map(databaseDrivers -> databaseDrivers.getDriver()).collect(Collectors.toList());
+        return drivers;
+    }
 
     static int i = 0;
 
@@ -66,7 +72,11 @@ public class PopulateController {
     public String addNewConnection(
             @RequestBody(required = false) DbConnection dbConnection) throws IOException, ParseException {
         manager.saveConnection(dbConnection);
-        return "sss";
+
+        ObjectNode node = mapper.createObjectNode();
+        node.put("status", "200");
+        node.put("message", "Connection added");
+        return node.toPrettyString();
     }
 
     @GetMapping("/getPresetConnections")

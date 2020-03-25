@@ -58,7 +58,7 @@
 
 
         <div class="form-group">
-            <sql-entry-row *ngFor="let row of columnRows" [mapped]="mappedSQLTypesToDataLibraryMethods" [entry]="row"></sql-entry-row>
+            <sql-entry-row #sqlEntryRows *ngFor="let row of columnRows" [mapped]="mappedSQLTypesToDataLibraryMethods" [entry]="row"></sql-entry-row>
         </div>
 
     </div>

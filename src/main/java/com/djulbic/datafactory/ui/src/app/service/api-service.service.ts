@@ -19,7 +19,7 @@ export class ApiService {
 
 
 constructor(
-  private http:HttpClient, 
+  private http:HttpClient,
   private snack:SnackBarService) { }
 
 init(){
@@ -43,6 +43,14 @@ urlGetMappedSQLTypesToDataLibraryMethods = this.url + '/api/getMappedSQLTypesToD
 urlExecute = this.url + '/api/execute';
 urlAddNewConnection = this.url + '/api/addPresetConnection';
 urlGetPresetConnection = this.url + '/api/getPresetConnections';
+urlGetDatabaseDrivers = this.url + '/api/getDatabaseDrivers';
+
+getDatabaseDrivers(){
+ console.log('Sending request to get get database drivers presets');
+  return this.http.get<string[]>(this.urlGetDatabaseDrivers).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );
+}
 
 
 getPresetConnections(){
@@ -56,7 +64,7 @@ addNewConnection(dbConnectionInfo:DbConnection){
   console.log('Sending request to add new connection preset');
   return this.http.post(this.urlAddNewConnection, dbConnectionInfo).pipe(
     catchError((e)=>this.handleError(e, this.snack))
-  );;
+  );
 }
 
 execute(requestConfig:DatabaseRequestConfig, data:ColumnSql[], insertQount:number) :any{
@@ -116,6 +124,10 @@ private handleError(error: HttpErrorResponse, snack:SnackBarService) {
   if (error.error instanceof ErrorEvent) {
     // A client-side or network error occurred. Handle it accordingly.
     console.error('Bojan - An error occurred:', error.error.message);
+
+    
+    
+    // return an observable with a user-facing error message
   } else {
     // The backend returned an unsuccessful response code.
     // The response body may contain clues as to what went wrong,
@@ -123,11 +135,11 @@ private handleError(error: HttpErrorResponse, snack:SnackBarService) {
       `Bojan - Backend returned code ${error.status}, ` +
       `body was: ${error.error}`);
   }
-  
+
   let trace = error.error.trace;
   let message = trace.substring(0, trace.indexOf("\r\n"));;
   snack.showError(message);
-  // return an observable with a user-facing error message
+
   return throwError(
     'Bojan - Something bad happened; please try again later.');
 };

@@ -77,7 +77,13 @@ export class DatabaseHeaderComponent implements OnInit {
       console.log('The dialog was closed');
       if(dbConnectionInfo){
         this.apiService.addNewConnection(dbConnectionInfo).subscribe((data)=>{
-          console.log("sss");
+          this.snackService.showSuccess("Added connection");
+
+          this.apiService.getPresetConnections().subscribe((data)=>{
+            console.log(data);
+            this.presetConnections = data;
+          })
+          
         });
       }
     });
@@ -107,7 +113,7 @@ export class DatabaseHeaderComponent implements OnInit {
     let config:DatabaseRequestConfig = {
       databaseName: "",
       databaseTable: "",
-      driver: "",
+      driver: this.selectedConnectionPreset.driver,
       url: this.selectedConnectionPreset.url,
       username: this.selectedConnectionPreset.username,
       password: this.selectedConnectionPreset.password,

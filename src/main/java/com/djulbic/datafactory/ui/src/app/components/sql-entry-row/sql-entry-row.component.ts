@@ -33,6 +33,28 @@ export class SqlEntryRowComponent implements OnInit {
 
   constructor() { }
 
+  isValid():boolean{
+    // row is disabled
+    if(!this.entry.checked){
+      return true;
+    }
+
+    // method is selected
+    if(!this.entry.method){
+      return false;
+    }
+
+    // if method takes params, params input has values
+    if(this.ifShowParamsInput){
+      if(!this.entry.method.inputParametars || this.entry.method.inputParametars.trim()===""){
+        console.log("params");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   ngOnInit() {
     console.log(this.entry);
     this.methodSelection = this.mapped[this.entry.type];
@@ -81,6 +103,7 @@ export class SqlEntryRowComponent implements OnInit {
     
     this.selectedValue = obj;
 
+    // Create copy of object - otherwise all methods objects of this type will be linked
     this.entry.method = Object.assign({}, this.selectedValue);
     //this.entry.method = this.selectedValue;
 

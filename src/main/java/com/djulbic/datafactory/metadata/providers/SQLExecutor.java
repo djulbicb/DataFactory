@@ -1,5 +1,6 @@
 package com.djulbic.datafactory.metadata.providers;
 
+import com.djulbic.datafactory.DatabaseDrivers;
 import com.djulbic.datafactory.model.DbConnection;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -11,18 +12,15 @@ import java.sql.Statement;
 import java.util.List;
 
 public class SQLExecutor {
-    String connectionUrl;
-    String username;
-    String password;
 
     HikariDataSource dataSource = null;
     Connection connection = null;
     Statement statement = null;
 
-    public SQLExecutor(DbConnection connection) {
-        this.connectionUrl = connection.getUrl();
-        this.username = connection.getUsername();
-        this.password = connection.getPassword();
+    DbConnection databaseConfig = null;
+
+    public SQLExecutor(DbConnection databaseConfig) {
+        this.databaseConfig = databaseConfig;
     }
 
     public void start() throws SQLException {
@@ -33,10 +31,12 @@ public class SQLExecutor {
 
     private HikariDataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
-        dataSourceBuilder.url(this.connectionUrl);//bojan?createDatabaseIfNotExist=true");
-        dataSourceBuilder.username(this.username);
-        dataSourceBuilder.password(this.password);
+        String driverClassName = DatabaseDrivers.valueOf(this.databaseConfig.getDriver()).getDriver();
+        dataSourceBuilder.driverClassName(driverClassName); //"com.mysql.jdbc.Driver"
+        //dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
+        dataSourceBuilder.url(this.databaseConfig.getUrl());//bojan?createDatabaseIfNotExist=true");
+        dataSourceBuilder.username(this.databaseConfig.getUsername());
+        dataSourceBuilder.password(this.databaseConfig.getPassword());
 
 
 //        dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
