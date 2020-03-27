@@ -5,7 +5,7 @@ import { DatabaseRequestConfig } from 'src/app/model/DatabaseRequestConfig';
 import { ColumnSql } from 'src/app/model/ColumnSql';
 import { MatSnackBar } from '@angular/material';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { ModalDbConnectionComponent } from '../modal-db-connection/modal-db-connection.component';
+import { ModalDbConnectionComponent } from '../modal/modal-db-connection/modal-db-connection.component';
 import { DbConnection } from 'src/app/model/DbConnection';
 import { SnackBarService } from 'src/app/service/snack-bar-service.service';
 
@@ -57,12 +57,6 @@ export class DatabaseHeaderComponent implements OnInit {
   url:"";
 
   openDialog(): void {
-    let db:DbConnection = {
-      driver: "",
-      username: "",
-      password: "",
-      url:""
-    }
     const dialogRef = this.dialog.open(ModalDbConnectionComponent, {
       width: '650px',
       data: {

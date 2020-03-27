@@ -64,22 +64,25 @@
     </div>
 
     <div class="col-2 p-0 text-center pl-1">
-        <div class="theme-bg mb-1">
-            Presets
-        </div>
+        <div class="theme-bg mb-1">    
 
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-block btn-info" (click)="click()">sss</button>
+            <div class="row">
+                <div class="col-4">&nbsp;</div>
+                <div class="col-4">Presets</div>
+                <div class="col-4" (click)="addExecuteRequestPreset()" data-toggle="modal" data-target="#myModal"><i class="material-icons icon-custom">library_add</i></div>
             </div>
         </div>
 
-
+        <div class="row" *ngFor="let preset of presets">        
+            <div class="col btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-primary">{{preset.config.databaseTable}}</button>
+                <button type="button" class="btn btn-outline-danger btn-group-remove" (click)="deletePreset(preset)">
+                    <i class="material-icons">delete</i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
-
-
-
 
 
 <!-- // https://stackblitz.com/edit/angular-filtering-rxjs?file=src%2Fapp%2Fapp.component.ts

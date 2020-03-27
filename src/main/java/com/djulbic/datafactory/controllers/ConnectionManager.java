@@ -1,11 +1,11 @@
 package com.djulbic.datafactory.controllers;
 
 import com.djulbic.datafactory.model.DbConnection;
+import com.djulbic.datafactory.model.ExecuteRequestDTO;
+import com.djulbic.datafactory.model.ExecuteRequestPreset;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeCreator;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.json.simple.parser.JSONParser;
@@ -15,10 +15,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import resources.FileUtility;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,10 +29,10 @@ public class ConnectionManager {
     @Autowired
     Environment environment;
 
-    public void saveConnection(DbConnection dbConnection) throws IOException, ParseException {
+    public void saveDatabaseConnectionPreset(DbConnection dbConnection) throws IOException, ParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        List<DbConnection> connections = getConnections();
+        List<DbConnection> connections = getDatabaseConnectionPresets();
         connections.add(dbConnection);
 
         String storagePath = environment.getProperty("STORAGE_PATH");
@@ -47,7 +44,7 @@ public class ConnectionManager {
         writer.close();
     }
 
-    public List<DbConnection> getConnections() throws IOException, ParseException {
+    public List<DbConnection> getDatabaseConnectionPresets() throws IOException, ParseException {
         String storagePath = environment.getProperty("STORAGE_PATH");
         String dbConnections = environment.getProperty("DB_CONNECTIONS");
         String filePath = storagePath + dbConnections;
@@ -65,8 +62,8 @@ public class ConnectionManager {
                 return list;
             }
 
-            List<DbConnection> users = new ObjectMapper().readValue(content, new TypeReference<List<DbConnection>>() {});
-            return users;
+            List<DbConnection> connections = new ObjectMapper().readValue(content, new TypeReference<List<DbConnection>>() {});
+            list.addAll(connections);
 
         } else{
             File f = new File(storagePath + dbConnections);
@@ -88,5 +85,68 @@ public class ConnectionManager {
             e.printStackTrace();
         }
         return contentBuilder.toString();
+    }
+
+    public List<ExecuteRequestPreset> getDatabaseRequestConfigPreset(ExecuteRequestDTO request) throws IOException {
+        ArrayList<ExecuteRequestPreset> list = new ArrayList<>();
+        File file = getPresetsFile(request);
+
+        if (file.exists()){
+            JSONParser parser = new JSONParser();
+            String content = readLineByLineJava8(file.getAbsolutePath());
+            if (content.isEmpty()){
+                return list;
+            }
+
+            List<ExecuteRequestPreset> connections = new ObjectMapper().readValue(content, new TypeReference<List<ExecuteRequestPreset>>() {});
+            list.addAll(connections);
+        } else{
+            file.createNewFile();
+        }
+
+        return list;
+    }
+
+    public void addDatabaseRequestConfigPreset(ExecuteRequestPreset preset) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        List<ExecuteRequestPreset> presets = getDatabaseRequestConfigPreset(preset.getRequest());
+        presets.add(preset);
+
+        String storagePath = environment.getProperty("PRESETS_FOLDER");
+        String presetPath = environment.getProperty("PRESETS_FOLDER");
+        String json = gson.toJson(presets);
+
+        File presetsFile = getPresetsFile(preset.getRequest());
+
+        FileWriter writer = new FileWriter(presetsFile);
+        writer.write(json);
+        writer.close();
+    }
+
+    public void removeDatabaseRequestConfigPreset(ExecuteRequestPreset request) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        List<ExecuteRequestPreset> presets = getDatabaseRequestConfigPreset(request.getRequest());
+        presets.remove(request);
+
+        String storagePath = environment.getProperty("PRESETS_FOLDER");
+        String presetPath = environment.getProperty("PRESETS_FOLDER");
+
+        String json = gson.toJson(presets);
+
+        FileWriter writer = new FileWriter(storagePath + presetPath + "/sss.json");
+        writer.write(json);
+        writer.close();
+    }
+
+    public File getPresetsFile(ExecuteRequestDTO request) throws IOException {
+        return getPresetsFile(request.getConfig().getDatabaseName());
+    }
+
+    public File getPresetsFile(String dbName) throws IOException {
+        String storagePath = environment.getProperty("STORAGE_PATH");
+        String presetPath = environment.getProperty("PRESETS_FOLDER");
+        File file = new File(storagePath + presetPath + dbName + ".json");
+        return file;
     }
 }

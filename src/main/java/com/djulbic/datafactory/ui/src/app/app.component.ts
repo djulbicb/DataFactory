@@ -10,6 +10,10 @@ import {map, startWith} from 'rxjs/operators';
 import { DatabaseHeaderComponent } from './components/database-header/database-header.component';
 import { SnackBarService } from './service/snack-bar-service.service';
 import { SqlEntryRowComponent } from './components/sql-entry-row/sql-entry-row.component';
+import { ExecuteRequestDTO } from './model/ExecuteRequestDTO';
+import { MatDialog } from '@angular/material';
+import { ExecuteRequestPreset } from './model/ExecuteRequestPreset';
+import { ModalExecutePresetComponent } from './components/modal/modal-execute-preset/modal-execute-preset.component';
 
 
 @Component({
@@ -22,12 +26,14 @@ export class AppComponent implements OnInit{
   posts:Observable<any>;
   columnRows:ColumnSql[];
   mappedSQLTypesToDataLibraryMethods;
+  presets:ExecuteRequestPreset[];
 
   @ViewChild("header", {static: null}) header:DatabaseHeaderComponent;
   @ViewChildren(SqlEntryRowComponent) sqlEntryRows:QueryList<SqlEntryRowComponent>;
 
   constructor(private api:ApiService, 
-              private snackService:SnackBarService
+              private snackService:SnackBarService,
+              public dialog: MatDialog
               ){
     api.getMappedSQLTypesToDataLibraryMethods().subscribe((data)=>{
       this.mappedSQLTypesToDataLibraryMethods = data;
@@ -39,12 +45,45 @@ export class AppComponent implements OnInit{
     this.posts=this.api.getConfig();
   }
 
-  showTable(config:DatabaseRequestConfig){
+  showTable(configgg:DatabaseRequestConfig){
+    let databaseConfig = this.header.getDatabaseRequestConfig();
+
+    console.log("---------");
+    console.log(databaseConfig);
+    let execute:ExecuteRequestDTO = {
+      config: databaseConfig,
+      columns: [],
+      insertQount: 10
+    }
+    let preset:ExecuteRequestPreset = {
+      presetName: "",
+      request: execute
+    }
+    this.api.getDatabaseRequestConfigPresets(preset).subscribe((data)=>{
+      this.presets = data;
+    });
+
     console.log("showTable()");
-    this.api.getColumns(config).subscribe((data)=>{
+    this.api.getColumns(configgg).subscribe((data)=>{
       console.log(data);
 
       this.columnRows = data;
+    });
+  }
+
+  addDatabaseRequestConfigPreset(){
+    let databaseConfig = this.header.getDatabaseRequestConfig();
+    let execute:ExecuteRequestDTO = {
+      config : databaseConfig,
+      columns: this.columnRows,
+      insertQount: 10
+    };
+    let preset:ExecuteRequestPreset = {
+      presetName: "",
+      request: execute
+    }
+    this.api.addDatabaseRequestConfigPreset(preset).subscribe((data)=>{
+
     });
   }
 
@@ -87,4 +126,25 @@ console.log("clear");
       this.columnRows = [];
     }
 
+  deletePreset(request:ExecuteRequestDTO){
+    console.log(request);
+  }
+
+  addExecuteRequestPreset(){
+    const dialogRef = this.dialog.open(ModalExecutePresetComponent, {
+      width: '650px',
+      data: {
+        preset: "",
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dbConnectionInfo => {
+      console.log('The dialog was closed');
+      if(dbConnectionInfo){
+       
+          
+       
+      }
+    });
+  }
 }

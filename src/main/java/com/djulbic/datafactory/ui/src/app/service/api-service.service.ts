@@ -11,6 +11,7 @@ import { ColumnSql } from '../model/ColumnSql';
 import { ExecuteRequestDTO } from '../model/ExecuteRequestDTO';
 import { DbConnection } from '../model/DbConnection';
 import { SnackBarService } from './snack-bar-service.service';
+import { ExecuteRequestPreset } from '../model/ExecuteRequestPreset';
 
 @Injectable({
   providedIn: 'root'
@@ -45,13 +46,37 @@ urlAddNewConnection = this.url + '/api/addPresetConnection';
 urlGetPresetConnection = this.url + '/api/getPresetConnections';
 urlGetDatabaseDrivers = this.url + '/api/getDatabaseDrivers';
 
+urlGetDatabaseRequestConfigPresets = this.url + '/api/getDatabaseRequestConfigPresets';
+urlAddDatabaseRequestConfigPreset = this.url + '/api/addDatabaseRequestConfigPreset';
+urlRemoveDatabaseRequestConfigPreset = this.url + '/api/removeDatabaseRequestConfigPreset';
+
+getDatabaseRequestConfigPresets(request:ExecuteRequestPreset){
+  console.log('Sending request to get get database drivers presets');
+   return this.http.post<ExecuteRequestPreset[]>(this.urlGetDatabaseRequestConfigPresets, request).pipe(
+     catchError((e)=>this.handleError(e, this.snack))
+   );
+ }
+
+ addDatabaseRequestConfigPreset(preset:ExecuteRequestPreset){
+  console.log('Sending request to get get database drivers presets');
+   return this.http.post<string[]>(this.urlAddDatabaseRequestConfigPreset, preset).pipe(
+     catchError((e)=>this.handleError(e, this.snack))
+   );
+ }
+
+ removeDatabaseRequestConfigPreset(listIndexOfRequest:number){
+  console.log('Sending request to get get database drivers presets');
+   return this.http.post<string[]>(this.urlRemoveDatabaseRequestConfigPreset, listIndexOfRequest).pipe(
+     catchError((e)=>this.handleError(e, this.snack))
+   );
+ }
+
 getDatabaseDrivers(){
  console.log('Sending request to get get database drivers presets');
   return this.http.get<string[]>(this.urlGetDatabaseDrivers).pipe(
     catchError((e)=>this.handleError(e, this.snack))
   );
 }
-
 
 getPresetConnections(){
   console.log('Sending request to get connection presets');

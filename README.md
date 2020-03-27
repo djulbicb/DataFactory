@@ -1,20 +1,17 @@
 # DataFactory
 
-> Under development
-
 DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as a API service and web app with UI.
 <br>These 2 projects are configurable lorem ipsum services that provide random but realistic data.
 
-API service can receive any JSON object and fill it with data (Check example below).<br> 
+API service receives any JSON object and fills it with data (Check example below).<br> 
 UI connects with database (just mysql for now) and inserts data into database 
 
 ### To do:
-- ui/back - add presets history
-- ui - check if selection valid
-- add to docker
+- ui/back - add presets
 
-### To do testing scenarios
+### To do / test
 - unique constraint, value already exist
+- add to docker
 
 <img src="./ui.PNG">
 

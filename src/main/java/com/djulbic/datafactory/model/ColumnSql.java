@@ -1,5 +1,7 @@
 package com.djulbic.datafactory.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class ColumnSql {
@@ -8,8 +10,14 @@ public class ColumnSql {
     private String name;
     private String type;
     private String size;
+
+    @JsonProperty(value="isForeignKey")
     private boolean isForeignKey;
+
+    @JsonProperty(value="isPrimaryKey")
     private boolean isPrimaryKey;
+
+    @JsonProperty(value="isNullable")
     private boolean isNullable;
     private MethodDTO method;
 

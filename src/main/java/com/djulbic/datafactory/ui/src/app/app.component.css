@@ -9,9 +9,27 @@ p {
   }
 
 
+.btn-group-remove {
+    max-width: 50px;
+}
 
 
 
+.material-icons {
+  transform: scale(1.5);
+    
+    font-size: 14px;
+}
+
+.icon-custom{
+  color: #fff;
+  transition:color 0.2s ease;
+  cursor: pointer;
+}
+
+.icon-custom:hover{
+  color: #007bff;
+}
 
 
 

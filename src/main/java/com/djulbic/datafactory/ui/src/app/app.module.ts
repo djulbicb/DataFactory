@@ -18,8 +18,9 @@ import { SqlEntryRowComponent } from './components/sql-entry-row/sql-entry-row.c
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSelectModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatDialogModule } from '@angular/material';
-import { ModalDbConnectionComponent } from './components/modal-db-connection/modal-db-connection.component';
-
+import { ModalDbConnectionComponent } from './components/modal/modal-db-connection/modal-db-connection.component';
+import {MatIconModule} from '@angular/material/icon';
+import { ModalExecutePresetComponent } from './components/modal/modal-execute-preset/modal-execute-preset.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +28,8 @@ import { ModalDbConnectionComponent } from './components/modal-db-connection/mod
     DatabaseHeaderComponent,
     LogoHeaderComponent,
     SqlEntryRowComponent,
-    ModalDbConnectionComponent
+    ModalDbConnectionComponent,
+    ModalExecutePresetComponent
   ],
   imports: [
     BrowserModule,
@@ -42,9 +44,10 @@ import { ModalDbConnectionComponent } from './components/modal-db-connection/mod
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    MatIconModule
   ],
-  entryComponents:[ ModalDbConnectionComponent ],
+  entryComponents:[ ModalDbConnectionComponent, ModalExecutePresetComponent ],
   providers: [],
   bootstrap: [AppComponent]
 })

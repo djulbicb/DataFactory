@@ -44,6 +44,21 @@ public class PopulateController {
     @Autowired
     ConnectionManager manager;
 
+    @PostMapping("/getDatabaseRequestConfigPresets")
+    public List<ExecuteRequestPreset> getDatabaseRequestConfigPresets(@RequestBody  ExecuteRequestDTO request) throws IOException {
+        return manager.getDatabaseRequestConfigPreset(request);
+    }
+
+    @PostMapping("/addDatabaseRequestConfigPreset")
+    public void addDatabaseRequestConfigPreset(@RequestBody ExecuteRequestPreset preset) throws IOException {
+        manager.addDatabaseRequestConfigPreset(preset);
+    }
+
+    @PostMapping("/removeDatabaseRequestConfigPreset")
+    public void removeDatabaseRequestConfigPreset(ExecuteRequestPreset preset) throws IOException {
+        manager.removeDatabaseRequestConfigPreset(preset);
+    }
+
     @GetMapping("/getMappedSQLTypesToDataLibraryMethods")
     public Map<String, List<MethodDTO>> getMappedSQLTypesToDataLibraryMethods(){
         return mapMySQLTypesToDataLibrary.getMappedSQLTypesToDataLibraryMethods();
@@ -64,14 +79,14 @@ public class PopulateController {
         connection.setDriver("sss" + i++);
         connection.setUrl("sss" + i++);
         connection.setPassword("sss" + i++);
-        manager.saveConnection(connection);
+        manager.saveDatabaseConnectionPreset(connection);
         return "sss";
     }
 
     @PostMapping("/addPresetConnection")
     public String addNewConnection(
             @RequestBody(required = false) DbConnection dbConnection) throws IOException, ParseException {
-        manager.saveConnection(dbConnection);
+        manager.saveDatabaseConnectionPreset(dbConnection);
 
         ObjectNode node = mapper.createObjectNode();
         node.put("status", "200");
@@ -82,7 +97,7 @@ public class PopulateController {
     @GetMapping("/getPresetConnections")
     public String getNewConnection() throws IOException, ParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonElement jsonElement = gson.toJsonTree(manager.getConnections());
+        JsonElement jsonElement = gson.toJsonTree(manager.getDatabaseConnectionPresets());
         return jsonElement.toString();
     }
 

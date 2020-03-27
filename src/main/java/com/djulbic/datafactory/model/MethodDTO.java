@@ -1,7 +1,10 @@
 package com.djulbic.datafactory.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class MethodDTO {
     private String methodName;
+    @JsonProperty(value="isVarArgs")
     private boolean isVarArgs;
     private int paramsCount;
 
