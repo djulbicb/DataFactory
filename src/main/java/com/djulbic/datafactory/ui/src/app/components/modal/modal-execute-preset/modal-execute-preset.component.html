@@ -1,7 +1,12 @@
-<div class="input-group">
-    <input type="text" class="form-control" placeholder="Specify preset name or db name is used" aria-label="Preset name" aria-describedby="basic-addon2">
-    <div class="input-group-append">
-      <button class="btn btn-outline-secondary" type="button">Add preset</button>
-      <button class="btn btn-outline-secondary" type="button">Close</button>
+
+<div class="row">
+    <div class="col">
+        <input type="text" class="form-control" placeholder="Add preset name or leave empty to use db name" aria-label="" aria-describedby="basic-addon1">
     </div>
-  </div>
+</div>
+<div class="pb-3">
+    <div mat-dialog-actions>
+        <button class="btn btn-primary mr-1" (click)="verifyAndSend(data)" cdkFocusInitial>Save connection</button>
+        <button class="btn btn-outline-danger" (click)="onNoClick()">Close</button>
+    </div>
+</div>

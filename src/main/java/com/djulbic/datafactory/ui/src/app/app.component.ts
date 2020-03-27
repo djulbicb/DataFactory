@@ -14,6 +14,7 @@ import { ExecuteRequestDTO } from './model/ExecuteRequestDTO';
 import { MatDialog } from '@angular/material';
 import { ExecuteRequestPreset } from './model/ExecuteRequestPreset';
 import { ModalExecutePresetComponent } from './components/modal/modal-execute-preset/modal-execute-preset.component';
+import { ModalDbConnectionComponent } from './components/modal/modal-db-connection/modal-db-connection.component';
 
 
 @Component({
@@ -134,16 +135,19 @@ console.log("clear");
     const dialogRef = this.dialog.open(ModalExecutePresetComponent, {
       width: '650px',
       data: {
-        preset: "",
+        driver: "",
+        username: "this.username",
+        password: "this.password",
+        url: "this.url"
       }
     });
 
     dialogRef.afterClosed().subscribe(dbConnectionInfo => {
       console.log('The dialog was closed');
       if(dbConnectionInfo){
-       
+        
           
-       
+        
       }
     });
   }
