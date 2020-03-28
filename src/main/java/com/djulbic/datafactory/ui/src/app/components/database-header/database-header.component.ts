@@ -56,32 +56,36 @@ export class DatabaseHeaderComponent implements OnInit {
     public dialog: MatDialog
 ) { }  
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(ModalDbConnectionComponent, {
-      width: '650px',
-      data: {
-        driver: this.driver,
-        username: this.username,
-        password: this.password,
-        url: this.url
-      }
-    });
+setSelectedTable(pas_selectedTable:string){
+  this.selectedTable = pas_selectedTable;
+}
 
-    dialogRef.afterClosed().subscribe(dbConnectionInfo => {
-      console.log('The dialog was closed');
-      if(dbConnectionInfo){
-        this.apiService.addNewConnection(dbConnectionInfo).subscribe((data)=>{
-          this.snackService.showSuccess("Added connection");
+openDialog(): void {
+  const dialogRef = this.dialog.open(ModalDbConnectionComponent, {
+    width: '650px',
+    data: {
+      driver: this.driver,
+      username: this.username,
+      password: this.password,
+      url: this.url
+    }
+  });
 
-          this.apiService.getPresetConnections().subscribe((data)=>{
-            console.log(data);
-            this.presetConnections = data;
-          })
-          
-        });
-      }
-    });
-  }
+  dialogRef.afterClosed().subscribe(dbConnectionInfo => {
+    console.log('The dialog was closed');
+    if(dbConnectionInfo){
+      this.apiService.addNewConnection(dbConnectionInfo).subscribe((data)=>{
+        this.snackService.showSuccess("Added connection");
+
+        this.apiService.getPresetConnections().subscribe((data)=>{
+          console.log(data);
+          this.presetConnections = data;
+        })
+        
+      });
+    }
+  });
+}
 
   changeConnection(event){
     console.log("Connection changed");
@@ -158,5 +162,11 @@ export class DatabaseHeaderComponent implements OnInit {
 
   getInsertCount():number{
     return this.insertCount.nativeElement.value;
+  }
+  setInsertCount(pas_insertCount:number){
+    this.insertCount.nativeElement.value = pas_insertCount;
+  }
+  setLanguage(pas_language:string){
+    this.selectedLanguage = pas_language;
   }
 }

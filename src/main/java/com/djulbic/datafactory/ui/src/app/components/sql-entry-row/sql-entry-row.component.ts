@@ -5,6 +5,7 @@ import {map, startWith} from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MatAutocomplete } from '@angular/material';
 import { MethodDTO } from 'src/app/model/MethodDTO';
+import { timingSafeEqual } from 'crypto';
 
 @Component({
   selector: 'sql-entry-row',
@@ -65,9 +66,10 @@ export class SqlEntryRowComponent implements OnInit {
         startWith(''),
         map(value => this._filter(value))
       );
-    this.ifShowDelimiterInput = (this.entry.method.inputDelimiter) ? true : false;
-    this.ifShowParamsInput = (this.entry.method.inputParametars) ? true : false;
+    this.ifShowDelimiterInput = (this.entry.method && this.entry.method.inputDelimiter) ? true : false;
+    this.ifShowParamsInput = (this.entry.method && this.entry.method.inputParametars) ? true : false;
     this.selectedValue = this.entry.method;
+    
   }
       
   private _filter(value: string): string[] {
@@ -91,8 +93,6 @@ export class SqlEntryRowComponent implements OnInit {
     console.log(this.selectedValue);
     console.log(this.ifShowParamsInput);
     console.log(this.ifShowDelimiterInput);
-    // console.log(this.inputParametars.nativeElement.value);
-    // console.log(this.inputDelimiter.nativeElement.value);
   }
 
   update(){

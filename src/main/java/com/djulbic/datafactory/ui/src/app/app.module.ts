@@ -13,7 +13,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DropdownAutocompleteComponent } from './components/dropdown-autocomplete/dropdown-autocomplete.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DatabaseHeaderComponent } from './components/database-header/database-header.component';
-import { LogoHeaderComponent } from './components/logo-header/logo-header.component';
 import { SqlEntryRowComponent } from './components/sql-entry-row/sql-entry-row.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
@@ -26,7 +25,6 @@ import { ModalExecutePresetComponent } from './components/modal/modal-execute-pr
     AppComponent,
     DropdownAutocompleteComponent,
     DatabaseHeaderComponent,
-    LogoHeaderComponent,
     SqlEntryRowComponent,
     ModalDbConnectionComponent,
     ModalExecutePresetComponent

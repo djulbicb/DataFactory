@@ -115,10 +115,11 @@ export class AppComponent implements OnInit{
   }
 
   onDatabaseChanged(pass_config:DatabaseRequestConfig){
-    console.log(">>>");
-    console.log(pass_config);
     this.clearColumnRows();
-    
+    this.loadExecutePresets(pass_config);
+  }
+
+  loadExecutePresets(pass_config:DatabaseRequestConfig){
     let request: ExecuteRequestDTO = {
       config : pass_config,
       insertQount: this.header.getInsertCount(),
@@ -151,6 +152,7 @@ export class AppComponent implements OnInit{
         console.log(presetToSave);
         this.api.addDatabaseRequestConfigPreset(presetToSave).subscribe((response)=>{
           console.log(response);
+          this.loadExecutePresets(presetToSave.request.config);
         });
       }
     });
@@ -172,7 +174,11 @@ export class AppComponent implements OnInit{
     
     this.api.getDatabaseRequestConfigPresetByPresetName(presetToLoad).subscribe(res_presetToLoad=>{
       console.log(res_presetToLoad);
+      
       let execute = res_presetToLoad.request;
+      this.header.setSelectedTable(execute.config.databaseTable);
+      this.header.setLanguage(execute.config.language);
+      this.header.setInsertCount(execute.insertQount);
       this.columnRows = execute.columns;
     });
   }

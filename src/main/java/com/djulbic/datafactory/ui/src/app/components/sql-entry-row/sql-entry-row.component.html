@@ -28,13 +28,15 @@
                        [matAutocomplete]="auto"
                        #inputMethodName
                        (blur)="updateMethodName()"
+                       [(ngModel)]="selectedValue"
+                       
                 >
                 <mat-autocomplete #auto="matAutocomplete"
                     [displayWith]="getOptionText"
                     (optionSelected)='optionSelected($event.option.value)'
                 >
                   <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                    {{option.methodName}}()
+                    {{option.methodName}}
                   </mat-option>
                 </mat-autocomplete>
 
