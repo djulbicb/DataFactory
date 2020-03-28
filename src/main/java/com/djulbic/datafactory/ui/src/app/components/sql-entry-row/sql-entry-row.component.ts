@@ -65,7 +65,9 @@ export class SqlEntryRowComponent implements OnInit {
         startWith(''),
         map(value => this._filter(value))
       );
-
+    this.ifShowDelimiterInput = (this.entry.method.inputDelimiter) ? true : false;
+    this.ifShowParamsInput = (this.entry.method.inputParametars) ? true : false;
+    this.selectedValue = this.entry.method;
   }
       
   private _filter(value: string): string[] {

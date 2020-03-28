@@ -30,3 +30,9 @@ build/
 .vscode/
 node_modules
 /.mvn/wrapper/maven-wrapper.jar
+/out/production/.mvn/maven-wrapper.jar
+/.mvn/wrapper/maven-wrapper.properties
+/out/production/.mvn/maven-wrapper.properties
+/out/production/.mvn/MavenWrapperDownloader$1.class
+/out/production/.mvn/MavenWrapperDownloader.class
+/.mvn/wrapper/MavenWrapperDownloader.java

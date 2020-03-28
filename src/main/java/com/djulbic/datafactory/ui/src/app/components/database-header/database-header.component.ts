@@ -22,11 +22,16 @@ export interface DialogData {
   styleUrls: ['./database-header.component.css']
 })
 export class DatabaseHeaderComponent implements OnInit {
+  driver: "";
+  username: "";
+  password: "";
+  url:"";
+
   selectedDatabase:string = "";
   selectedLanguage:string = "ENGLISH";
   selectedConnectionPreset:DbConnection;
 
-  @ViewChild("inputInsertCount", {static:null}) inputInsertCount:ElementRef;
+  @ViewChild("insertCount", {static:null}) insertCount:ElementRef;
   dataLibraryLanguages:Array<string>;
 
   inputdatabases:Observable<any>;
@@ -39,7 +44,7 @@ export class DatabaseHeaderComponent implements OnInit {
 
   presetConnections:DbConnection[];
 
-  @Output() emmitDatabaseChanged = new EventEmitter<String>();
+  @Output() emmitDatabaseChanged = new EventEmitter<DatabaseRequestConfig>();
   @Output() emmitShowColumns = new EventEmitter<DatabaseRequestConfig>();
   @Output() emmitExecute = new EventEmitter<String>();
 
@@ -49,12 +54,7 @@ export class DatabaseHeaderComponent implements OnInit {
     private apiService:ApiService,
     private snackService:SnackBarService,
     public dialog: MatDialog
-) { }
-
-  driver: "";
-  username: "";
-  password: "";
-  url:"";
+) { }  
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ModalDbConnectionComponent, {
@@ -121,7 +121,7 @@ export class DatabaseHeaderComponent implements OnInit {
   }
 
   checkAndExecute(numberOfQueries){
-    this.inputInsertCount.nativeElement.value = numberOfQueries;
+    this.insertCount.nativeElement.value = numberOfQueries;
     if(this.autoExecute){
       this.emmitExecute.emit(numberOfQueries);
     } else{
@@ -140,7 +140,7 @@ export class DatabaseHeaderComponent implements OnInit {
   onDatabaseChange(){
     let config = this.getDatabaseRequestConfig();
     this.selectedTable="";
-    this.emmitDatabaseChanged.emit(this.selectedDatabase);
+    this.emmitDatabaseChanged.emit(config);
 
     this.apiService.getTables(config).subscribe((data)=>{
       this.tables = data;
@@ -154,5 +154,9 @@ export class DatabaseHeaderComponent implements OnInit {
       console.log(data);
       this.emmitShowColumns.emit(config);
     })
+  }
+
+  getInsertCount():number{
+    return this.insertCount.nativeElement.value;
   }
 }

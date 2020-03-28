@@ -6,31 +6,9 @@
 <div class="row mb-1">
     <div class="col">
         <database-header
-           #header (emmitExecute)="executeBatch($event)" (emmitShowColumns)="showTable($event)" (emmitDatabaseChanged)="clearRows($event)"></database-header>
+           #header (emmitExecute)="executeBatch($event)" (emmitShowColumns)="showTable($event)" (emmitDatabaseChanged)="onDatabaseChanged($event)"></database-header>
     </div>
 </div>
-<!--
-<form class="example-form">
-
-    <mat-form-field class="example-full-width" floatLabel="never">
-      <input type="text"
-             placeholder="Pick one"
-             aria-label="Number"
-             matInput
-
-             [formControl]="myControl"
-             [matAutocomplete]="auto">
-
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-          {{option}}
-        </mat-option>
-      </mat-autocomplete>
-
-    </mat-form-field>
-  </form>
-   -->
-
 
 <div class="row h-100">
     <div class="col-10 h-100">
@@ -55,17 +33,15 @@
             </div>
         </div>
 
-
-
         <div class="form-group">
             <sql-entry-row #sqlEntryRows *ngFor="let row of columnRows" [mapped]="mappedSQLTypesToDataLibraryMethods" [entry]="row"></sql-entry-row>
         </div>
 
     </div>
 
+    <!-- Presets section - start -->
     <div class="col-2 p-0 text-center pl-1">
         <div class="theme-bg mb-1">    
-
             <div class="row">
                 <div class="col-4">&nbsp;</div>
                 <div class="col-4">Presets</div>
@@ -73,15 +49,19 @@
             </div>
         </div>
 
-        <div class="row" *ngFor="let preset of presets">        
+        <!-- Presets buttons - start -->
+        <div class="row mb-1 border-transparent" *ngFor="let presetName of presets">        
             <div class="col btn-group" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-primary">{{preset.config.databaseTable}}</button>
-                <button type="button" class="btn btn-outline-danger btn-group-remove" (click)="deletePreset(preset)">
+                <button type="button" class="btn btn-outline-primary" (click)="loadExecuteRequestPresetByPresetName(presetName)">{{presetName}}</button>
+                <button type="button" class="btn btn-outline-danger btn-group-remove" (click)="removeExecuteRequestPreset(presetName)">
                     <i class="material-icons">delete</i>
                 </button>
             </div>
         </div>
+        <!-- Presets buttons - end -->
     </div>
+    <!-- Presets section - end -->
+
 </div>
 
 

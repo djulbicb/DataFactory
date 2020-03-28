@@ -113,30 +113,35 @@ public class ConnectionManager {
         List<ExecuteRequestPreset> presets = getDatabaseRequestConfigPreset(preset.getRequest());
         presets.add(preset);
 
-        String storagePath = environment.getProperty("PRESETS_FOLDER");
-        String presetPath = environment.getProperty("PRESETS_FOLDER");
         String json = gson.toJson(presets);
 
         File presetsFile = getPresetsFile(preset.getRequest());
-
         FileWriter writer = new FileWriter(presetsFile);
         writer.write(json);
         writer.close();
     }
 
-    public void removeDatabaseRequestConfigPreset(ExecuteRequestPreset request) throws IOException {
+    public void removeDatabaseRequestConfigPreset(ExecuteRequestPreset preset) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        List<ExecuteRequestPreset> presets = getDatabaseRequestConfigPreset(request.getRequest());
-        presets.remove(request);
 
-        String storagePath = environment.getProperty("PRESETS_FOLDER");
-        String presetPath = environment.getProperty("PRESETS_FOLDER");
+        List<ExecuteRequestPreset> presets = getDatabaseRequestConfigPreset(preset.getRequest());
+        presets.remove(preset);
 
         String json = gson.toJson(presets);
 
-        FileWriter writer = new FileWriter(storagePath + presetPath + "/sss.json");
+        File presetsFile = getPresetsFile(preset.getRequest());
+        FileWriter writer = new FileWriter(presetsFile);
         writer.write(json);
         writer.close();
+    }
+
+    public List<String> getDatabaseRequestConfigPresetAsStringList(ExecuteRequestDTO request) throws IOException {
+        List<ExecuteRequestPreset> presets = getDatabaseRequestConfigPreset(request);
+        List<String> presetsName = new ArrayList<>();
+        for (ExecuteRequestPreset preset : presets) {
+            presetsName.add(preset.getPresetName());
+        }
+        return presetsName;
     }
 
     public File getPresetsFile(ExecuteRequestDTO request) throws IOException {
@@ -148,5 +153,15 @@ public class ConnectionManager {
         String presetPath = environment.getProperty("PRESETS_FOLDER");
         File file = new File(storagePath + presetPath + dbName + ".json");
         return file;
+    }
+
+    public ExecuteRequestPreset getDatabaseRequestConfigPresetByPresetName(ExecuteRequestPreset request) throws IOException {
+        List<ExecuteRequestPreset> presets = getDatabaseRequestConfigPreset(request.getRequest());
+        for (ExecuteRequestPreset preset : presets) {
+            if (preset.equals(request)){
+                return preset;
+            }
+        }
+        throw new IllegalArgumentException(String.format("Cant find preset %s for database %s.", request.getPresetName(), request.getRequest().getConfig().getDatabaseName()));
     }
 }

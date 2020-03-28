@@ -27,7 +27,7 @@ export class AppComponent implements OnInit{
   posts:Observable<any>;
   columnRows:ColumnSql[];
   mappedSQLTypesToDataLibraryMethods;
-  presets:ExecuteRequestPreset[];
+  presets:string[];
 
   @ViewChild("header", {static: null}) header:DatabaseHeaderComponent;
   @ViewChildren(SqlEntryRowComponent) sqlEntryRows:QueryList<SqlEntryRowComponent>;
@@ -44,30 +44,14 @@ export class AppComponent implements OnInit{
 
   ngOnInit(){
     this.posts=this.api.getConfig();
+
+    
   }
 
-  showTable(configgg:DatabaseRequestConfig){
-    let databaseConfig = this.header.getDatabaseRequestConfig();
-
-    console.log("---------");
-    console.log(databaseConfig);
-    let execute:ExecuteRequestDTO = {
-      config: databaseConfig,
-      columns: [],
-      insertQount: 10
-    }
-    let preset:ExecuteRequestPreset = {
-      presetName: "",
-      request: execute
-    }
-    this.api.getDatabaseRequestConfigPresets(preset).subscribe((data)=>{
-      this.presets = data;
-    });
-
+  showTable(config:DatabaseRequestConfig){
     console.log("showTable()");
-    this.api.getColumns(configgg).subscribe((data)=>{
+    this.api.getColumns(config).subscribe((data)=>{
       console.log(data);
-
       this.columnRows = data;
     });
   }
@@ -116,39 +100,98 @@ export class AppComponent implements OnInit{
 
   click(){
     console.log(this.columnRows);
-
     this.api.execute(this.header.getDatabaseRequestConfig(), this.columnRows, 1).subscribe((data)=>{
       console.log(data);
     });
   }
 
-    clearRows(){
-console.log("clear");
-      this.columnRows = [];
-    }
+  clearColumnRows(){
+    this.columnRows = [];
+    this.presets = [];
+  }
 
   deletePreset(request:ExecuteRequestDTO){
     console.log(request);
+  }
+
+  onDatabaseChanged(pass_config:DatabaseRequestConfig){
+    console.log(">>>");
+    console.log(pass_config);
+    this.clearColumnRows();
+    
+    let request: ExecuteRequestDTO = {
+      config : pass_config,
+      insertQount: this.header.getInsertCount(),
+      columns: []
+    }
+
+    this.api.getDatabaseRequestConfigPresetsAsStringList(request).subscribe(listOfPresets=>{
+      this.presets = listOfPresets;
+    });
   }
 
   addExecuteRequestPreset(){
     const dialogRef = this.dialog.open(ModalExecutePresetComponent, {
       width: '650px',
       data: {
-        driver: "",
-        username: "this.username",
-        password: "this.password",
-        url: "this.url"
+        presetName: ""
       }
     });
 
-    dialogRef.afterClosed().subscribe(dbConnectionInfo => {
-      console.log('The dialog was closed');
-      if(dbConnectionInfo){
-        
-          
-        
+    dialogRef.afterClosed().subscribe(inputPresetName => {
+      console.log('The preset dialog was closed');
+      console.log(inputPresetName);
+
+      if(inputPresetName){
+        //this.api.addDatabaseRequestConfigPreset(inputPreset);
+
+        let presetToSave = this.getExecutePresetFromUI();
+        presetToSave.presetName = inputPresetName;
+
+        console.log(presetToSave);
+        this.api.addDatabaseRequestConfigPreset(presetToSave).subscribe((response)=>{
+          console.log(response);
+        });
       }
     });
+  }
+
+  removeExecuteRequestPreset(in_presetName:string){
+    let presetToRemove = this.getExecutePresetFromUI();
+    presetToRemove.presetName = in_presetName;
+
+    this.api.removeDatabaseRequestConfigPreset(presetToRemove).subscribe(res_updatededPresetsAfterRemoval=>{
+      this.presets = res_updatededPresetsAfterRemoval;
+    });
+  }
+
+  loadExecuteRequestPresetByPresetName(in_presetName:string){
+    /* execute preset object serves as a dto here. Only in_presetName and databaseName are used on backend*/
+    let presetToLoad = this.getExecutePresetFromUI();
+    presetToLoad.presetName = in_presetName;
+    
+    this.api.getDatabaseRequestConfigPresetByPresetName(presetToLoad).subscribe(res_presetToLoad=>{
+      console.log(res_presetToLoad);
+      let execute = res_presetToLoad.request;
+      this.columnRows = execute.columns;
+    });
+  }
+
+  
+  
+  getExecutePresetFromUI(){
+    let databaseConfig = this.header.getDatabaseRequestConfig();
+    let insertCount = this.header.getInsertCount();
+
+    let execute:ExecuteRequestDTO = {
+      config: databaseConfig,
+      columns: this.columnRows,
+      insertQount: insertCount
+    }
+    let preset:ExecuteRequestPreset = {
+      presetName: "",
+      request: execute
+    }
+    return preset;
   }
 }

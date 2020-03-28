@@ -47,32 +47,49 @@ urlGetPresetConnection = this.url + '/api/getPresetConnections';
 urlGetDatabaseDrivers = this.url + '/api/getDatabaseDrivers';
 
 urlGetDatabaseRequestConfigPresets = this.url + '/api/getDatabaseRequestConfigPresets';
+urlGetDatabaseRequestConfigPresetsAsStringList = this.url + '/api/getDatabaseRequestConfigPresetsAsStringList';
 urlAddDatabaseRequestConfigPreset = this.url + '/api/addDatabaseRequestConfigPreset';
 urlRemoveDatabaseRequestConfigPreset = this.url + '/api/removeDatabaseRequestConfigPreset';
+urlGetDatabaseRequestConfigPresetByPresetName = this.url + "/api/getDatabaseRequestConfigPresetByPresetName";
+
+getDatabaseRequestConfigPresetsAsStringList(request:ExecuteRequestDTO){
+  console.log('Sending request urlGetDatabaseRequestConfigPresetsAsStringList');
+  console.log(request);
+  return this.http.post<string[]>(this.urlGetDatabaseRequestConfigPresetsAsStringList, request).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );
+}
 
 getDatabaseRequestConfigPresets(request:ExecuteRequestPreset){
-  console.log('Sending request to get get database drivers presets');
-   return this.http.post<ExecuteRequestPreset[]>(this.urlGetDatabaseRequestConfigPresets, request).pipe(
-     catchError((e)=>this.handleError(e, this.snack))
-   );
- }
+  console.log('Sending request to getDatabaseRequestConfigPresets');
+  return this.http.post<ExecuteRequestPreset[]>(this.urlGetDatabaseRequestConfigPresets, request).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );
+}
 
  addDatabaseRequestConfigPreset(preset:ExecuteRequestPreset){
-  console.log('Sending request to get get database drivers presets');
+  console.log('Sending request to addDatabaseRequestConfigPreset');
    return this.http.post<string[]>(this.urlAddDatabaseRequestConfigPreset, preset).pipe(
      catchError((e)=>this.handleError(e, this.snack))
    );
  }
 
- removeDatabaseRequestConfigPreset(listIndexOfRequest:number){
-  console.log('Sending request to get get database drivers presets');
-   return this.http.post<string[]>(this.urlRemoveDatabaseRequestConfigPreset, listIndexOfRequest).pipe(
-     catchError((e)=>this.handleError(e, this.snack))
-   );
+ getDatabaseRequestConfigPresetByPresetName(preset:ExecuteRequestPreset){
+  console.log('Sending request to getDatabaseRequestConfigPresetByPresetName');
+  return this.http.post<ExecuteRequestPreset>(this.urlGetDatabaseRequestConfigPresetByPresetName, preset).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );
+ }
+
+ removeDatabaseRequestConfigPreset(preset:ExecuteRequestPreset){
+  console.log('Sending request to removeDatabaseRequestConfigPreset');
+  return this.http.post<string[]>(this.urlRemoveDatabaseRequestConfigPreset, preset).pipe(
+    catchError((e)=>this.handleError(e, this.snack))
+  );
  }
 
 getDatabaseDrivers(){
- console.log('Sending request to get get database drivers presets');
+ console.log('Sending request to getDatabaseDrivers');
   return this.http.get<string[]>(this.urlGetDatabaseDrivers).pipe(
     catchError((e)=>this.handleError(e, this.snack))
   );

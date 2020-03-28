@@ -44,9 +44,20 @@ public class PopulateController {
     @Autowired
     ConnectionManager manager;
 
+
+    @PostMapping("/getDatabaseRequestConfigPresetByPresetName")
+    public ExecuteRequestPreset getDatabaseRequestConfigPresetByPresetName(@RequestBody  ExecuteRequestPreset request) throws IOException {
+        return manager.getDatabaseRequestConfigPresetByPresetName(request);
+    }
+
     @PostMapping("/getDatabaseRequestConfigPresets")
     public List<ExecuteRequestPreset> getDatabaseRequestConfigPresets(@RequestBody  ExecuteRequestDTO request) throws IOException {
         return manager.getDatabaseRequestConfigPreset(request);
+    }
+
+    @PostMapping("/getDatabaseRequestConfigPresetsAsStringList")
+    public List<String> getDatabaseRequestConfigPresetsAsStringList(@RequestBody  ExecuteRequestDTO request) throws IOException {
+        return manager.getDatabaseRequestConfigPresetAsStringList(request);
     }
 
     @PostMapping("/addDatabaseRequestConfigPreset")
@@ -55,8 +66,9 @@ public class PopulateController {
     }
 
     @PostMapping("/removeDatabaseRequestConfigPreset")
-    public void removeDatabaseRequestConfigPreset(ExecuteRequestPreset preset) throws IOException {
+    public List<String> removeDatabaseRequestConfigPreset(@RequestBody ExecuteRequestPreset preset) throws IOException {
         manager.removeDatabaseRequestConfigPreset(preset);
+        return manager.getDatabaseRequestConfigPresetAsStringList(preset.getRequest());
     }
 
     @GetMapping("/getMappedSQLTypesToDataLibraryMethods")

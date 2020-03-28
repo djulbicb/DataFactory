@@ -31,6 +31,9 @@ p {
   color: #007bff;
 }
 
+.border-transparent{
+  border: 1px solid transparent;
+}
 
 
 
