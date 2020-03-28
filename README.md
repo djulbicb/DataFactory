@@ -6,6 +6,11 @@ DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as an
 API service receives any JSON object and fills it with data (Check example below).<br> 
 UI connects with database (just mysql for now) and inserts data into database 
 
+# To run add env vars to IDE
+STORAGE_PATH=C:/Users/user/IdeaProjects/storage/
+DB_CONNECTIONS=dbConnections.json
+PRESETS_FOLDER=presets/
+
 ### To do / test
 - unique constraint, value already exist
 - add to docker
