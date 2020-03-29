@@ -5,9 +5,7 @@ DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as an
 <br>These 2 projects allow users to create custom API service which provide random but realistic data, similar to lorem ipsum services.  
   
 API service receives any JSON object and fills it with data (Check example below). 
-UI connects with database (just mysql for now) and inserts data into database   
-  
-<img src="./ui.PNG">  
+UI connects with database (just mysql for now) and inserts data into database     
   
 ## API  
 Send any JSON object to API and it will fill it with random data based on specified method call. For example  
@@ -28,7 +26,7 @@ Send any JSON object to API and it will fill it with random data based on specif
    "something": "This will remain same cause it is isnt a method call"
 }
 ```  
-Order of properties is not kept at the moment. 
+And it will return this JSON object as response.
 ```  
 {
     "name": "Odell",
@@ -45,7 +43,8 @@ Order of properties is not kept at the moment.
     ],
     "something": "This will remain same cause it is isnt a method call"
 }
-```  
+```   
+
 ### PHP  Example using AJAX for HTTP request
 ```
 class Test {
@@ -126,6 +125,9 @@ export default Users;
 ```
   
 # Run DataFactory with UI
+
+<img src="./ui.PNG">
+
 Add environment vars to IDE
 | ENV VAR | VALUE |
 |--|--|
