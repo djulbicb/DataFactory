@@ -125,8 +125,8 @@ export default Users;
 ```
   
 # Run DataFactory with UI
-
 <img src="./ui.PNG">
+Connects to sql database (for now just mysql) and allows users to populate db with data. 
 
 Add environment vars to IDE
 | ENV VAR | VALUE |
