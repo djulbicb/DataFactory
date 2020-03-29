@@ -4,6 +4,6 @@ export class DatabaseRequestConfig{
     url:string;
     username:string;
     password:string;
-    databaseName:String;
-    databaseTable:String;
+    databaseName:string;
+    databaseTable:string;
 }
