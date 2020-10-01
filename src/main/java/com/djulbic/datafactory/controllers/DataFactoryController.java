@@ -7,6 +7,7 @@ import data.DataLibrary;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONArray;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,44 +19,56 @@ import java.util.*;
 @Controller
 public class DataFactoryController {
 
+    private static final String DEFAUL_API_ID = "apiId";
     private static final int DEFAULT_API_ITEM_COUNT = 1;
     private static final int DEFAULT_API_WAIT_TIME = 0;
-    private static final List<String> RESERVED_WORDS = Arrays.asList("apiName", "apiWait", "apiCount", "apiId");
-    private static final String DEFAUL_API_ID = "apiId";
+    private static final List<String> RESERVED_WORDS = Arrays.asList("apiName", "apiWait", "apiCount", "apiId", "apiLanguage");
 
     private Map<String, Api> apiMap = new HashMap();
 
-
-    @GetMapping("/get/{apiName}")
+    @GetMapping("/api/{apiName}")
     public ResponseEntity<String> get ( @PathVariable(name = "apiName") String apiName) {
-        Api apiConfig = apiMap.get(apiName);
-        return ResponseEntity.ok(apiConfig.toString());
+        Api api = apiMap.get(apiName);
+        if (api == null) {
+            return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(api.findAll().toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/get/{apiName}/{apiId}")
+    @GetMapping("/api/{apiName}/{apiId}")
     public ResponseEntity<String> getOne (
             @PathVariable(name = "apiName") String apiName,
             @PathVariable(name = "apiId") String apiId) {
-        Api apiConfig = apiMap.get(apiName);
+        Api api = apiMap.get(apiName);
 
-        for (Object obj : apiConfig.getData()) {
-            if (obj instanceof JSONObject) {
-                JSONObject jsonObject = (JSONObject) obj;
-                Object o = jsonObject.get(apiConfig.getId());
-
-                if (o.toString().equals(apiId)) {
-                    return ResponseEntity.ok(jsonObject.toString());
-                }
-            } else if (obj instanceof org.json.JSONArray) {
-                JSONArray array = (JSONArray) obj;
-                int index = Integer.parseInt(apiId);
-                return ResponseEntity.ok(array.get(index).toString());
-
-
-            }
+        Optional byId = api.findById(apiId);
+        if (byId.isPresent()) {
+            return ResponseEntity.ok().body(byId.get().toString());
         }
+        return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
+    }
 
-        return ResponseEntity.badRequest().build();
+    @DeleteMapping("/api/{apiName}")
+    public ResponseEntity<String> delete (
+            @PathVariable(name = "apiName") String apiName) {
+
+        Api api = apiMap.remove(apiName);
+        if (api != null) {
+            return new ResponseEntity(String.format("Api %s removed", api.getName()), HttpStatus.OK);
+        }
+        return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/api/{apiName}/{apiId}")
+    public ResponseEntity<String> deleteOne (
+            @PathVariable(name = "apiName") String apiName,
+            @PathVariable(name = "apiId") String apiId) {
+        Api api = apiMap.get(apiName);
+        boolean deleted = api.deleteById(apiId);
+        if (deleted) {
+            return new ResponseEntity(api.findAll().toString(), HttpStatus.OK);
+        }
+        return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/set/{apiName}")
@@ -92,7 +105,7 @@ public class DataFactoryController {
         String json = gson.toJson(object);
 
         System.out.println(json);
-        JSONArray parse = parse(json, DEFAUL_API_ID, apiCount);
+        JSONArray parse = parseJsonString(json, DEFAUL_API_ID, apiCount);
 
         Api api = new Api.Builder()
                 .withName(apiName)
@@ -102,7 +115,7 @@ public class DataFactoryController {
 
         apiMap.put(apiName, api);
 
-        return ResponseEntity.ok(json);
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PostMapping("/set/{apiName}")
@@ -111,7 +124,9 @@ public class DataFactoryController {
             @RequestBody(required = false) String json,
             @PathVariable(name = "apiName") String apiName
         ) throws InvocationTargetException, IllegalAccessException {
+
         String jsonForParsing = json;
+
         int apiWait = DEFAULT_API_WAIT_TIME;
         int apiCount = DEFAULT_API_ITEM_COUNT;
         String apiId = DEFAUL_API_ID;
@@ -139,7 +154,7 @@ public class DataFactoryController {
             jsonForParsing = elementObj.toString();
         }
 
-        JSONArray parse = parse(jsonForParsing, apiId, apiCount);
+        JSONArray parse = parseJsonString(jsonForParsing, apiId, apiCount);
 
         Api api = new Api.Builder()
                 .withName(apiName)
@@ -149,10 +164,10 @@ public class DataFactoryController {
                 .build();
         apiMap.put(apiName, api);
 
-        return ResponseEntity.ok(parse.toString());
+        return new ResponseEntity(parse.toString(), HttpStatus.OK);
     }
 
-    private JSONArray parse(String json, String apiId, int count) throws InvocationTargetException, IllegalAccessException {
+    private JSONArray parseJsonString (String json, String apiId, int count) throws InvocationTargetException, IllegalAccessException {
         DataLibrary data = DataLibrary.getEnglishData();
 
         JsonParserDL parse = new JsonParserDL(data);
