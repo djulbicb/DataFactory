@@ -1,7 +1,6 @@
 package com.djulbic.datafactory;
 
 import data.DataLibrary;
-import io.micrometer.core.instrument.util.StringEscapeUtils;
 
 import javax.el.MethodNotFoundException;
 import java.lang.reflect.Method;
@@ -11,10 +10,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public interface MethodCallParser {
-    Object parse(DataLibrary dataLibrary, String methodCall, String delimiter);
+public class MethodCallParser {
+    public Object parse(DataLibrary dataLibrary, String methodCall, String delimiter){
+        String methodNameSubstr = getMethodNameSubstrFromString(methodCall);
+        String paramSubstr = getMethodParamsSubstrFromString(methodCall);
+        List<String> extractedParams = getParametarExtracted(paramSubstr, delimiter);
 
-    default Method getMethodByName(String methodName, Class scanClass){
+        System.out.println(methodNameSubstr);
+        System.out.println(extractedParams);
+
+        Method methodByName = getMethodByName(methodNameSubstr, DataLibrary.class);
+        Object[] params = getParams(methodByName, extractedParams);
+
+        System.out.println(Arrays.toString(params));
+
+        try {
+            Object invoke = methodByName.invoke(dataLibrary, params);
+            System.out.println("Return: " + invoke.toString());
+            return invoke;
+
+        }catch (Exception e){
+            throw new MethodNotFoundException(methodCall);
+        }
+    }
+
+    public Method getMethodByName(String methodName, Class scanClass){
         List<Method> methods = new ArrayList<>();
         Method[] declaredMethods = scanClass.getDeclaredMethods();
         for (Method method : declaredMethods) {
@@ -25,7 +45,7 @@ public interface MethodCallParser {
         throw new MethodNotFoundException("Method " + methodName + " not found");
     }
 
-    default String getMethodNameSubstrFromString(String methodCall){
+    public String getMethodNameSubstrFromString(String methodCall){
         if (methodCall.contains("(") && methodCall.contains(")")){
             String methondName = methodCall.substring(0, methodCall.indexOf("("));
             return methondName.trim();
@@ -33,7 +53,7 @@ public interface MethodCallParser {
         return methodCall;
     }
 
-    default String getMethodParamsSubstrFromString(String methodCall){
+    public String getMethodParamsSubstrFromString(String methodCall){
         if (methodCall.contains("(") && methodCall.contains(")")){
             methodCall = methodCall.substring(methodCall.indexOf("(")+1, methodCall.lastIndexOf(")") );
             return methodCall.trim();
@@ -41,37 +61,15 @@ public interface MethodCallParser {
         return methodCall;
     }
 
-    default List<String> getParametarExtracted(String paramsAsString,  String delimeter){
+    public List<String> getParametarExtracted(String paramsAsString,  String delimeter){
         List<String> tokensList = new ArrayList<String>();
 
         String[] split =paramsAsString.split(Pattern.quote(delimeter));
         List<String> strings = Arrays.asList(split);
-
-//        boolean inQuotes = false;
-//        StringBuilder b = new StringBuilder();
-//        for (char character : tested.toCharArray()) {
-//            String charAsStr = character + "";
-//            switch (charAsStr) {
-//                case delimeter:
-//                    if (inQuotes) {
-//                        b.append(charAsStr);
-//                    } else {
-//                        tokensList.add(b.toString().trim());
-//                        b = new StringBuilder();
-//                    }
-//                    break;
-//                case "\"":
-//                    inQuotes = !inQuotes;
-//                default:
-//                    b.append(charAsStr);
-//                    break;
-//            }
-//        }
-//        tokensList.add(b.toString().trim());
         return strings;
     }
 
-    default Object[] getParams(Method method, List<String> extractedParams){
+    public Object[] getParams(Method method, List<String> extractedParams){
         System.out.println(method.getName());
         System.out.println(method.getParameterCount());
 

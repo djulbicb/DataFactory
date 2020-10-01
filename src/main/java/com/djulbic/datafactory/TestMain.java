@@ -1,11 +1,5 @@
 package com.djulbic.datafactory;
 
-
-
-import com.djulbic.datafactory.metadata.providers.MySQLMetadataService;
-import com.djulbic.datafactory.model.ColumnSql;
-
-import com.djulbic.datafactory.model.MethodDTO;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
 import javax.el.MethodNotFoundException;
@@ -16,7 +10,6 @@ import java.lang.reflect.Parameter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class TestMain {
 
@@ -136,31 +129,7 @@ public class TestMain {
         }
         throw new MethodNotFoundException("Method " + methodName + " not found");
     }
-
-
-    public static List<ColumnSql> getColumnsMetadata(DatabaseMetaData metaData) throws SQLException {
-        ResultSet resultSet = metaData.getColumns(null, null, "bojan", null); // ovo je db
-        List<ColumnSql> columnSql = new ArrayList<>();
-        while (resultSet.next()) {
-            String name = resultSet.getString("COLUMN_NAME");
-            String type = resultSet.getString("TYPE_NAME");
-            String size = resultSet.getString("COLUMN_SIZE");
-
-            ColumnSql column = new ColumnSql(name, type, size);
-
-            columnSql.add(column);
-        }
-        return columnSql;
-    }
-
-    public static DataSource getDataSource() {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName(com.mysql.cj.jdbc.Driver.class.getName()); //"com.mysql.jdbc.Driver"
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306");//bojan?createDatabaseIfNotExist=true");
-        dataSourceBuilder.username("root");
-        dataSourceBuilder.password("");
-        return dataSourceBuilder.build();
-    }
+    
 }
 
 

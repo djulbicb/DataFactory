@@ -4,7 +4,7 @@
 DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as an API service and web app with UI.  
 <br>These 2 projects allow users to create custom API service which provide random but realistic data, similar to lorem ipsum services.  
   
-API service receives any JSON object and fills it with data (Check example below). 
+Users can send any JSON object to the API service and it will return a single or an array of JSON objects filled with data based on the object you sent (Check example below). 
 UI connects with database (just mysql for now) and inserts data into database     
   
 ## API  
