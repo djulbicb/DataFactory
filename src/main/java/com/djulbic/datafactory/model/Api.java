@@ -9,12 +9,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 public class Api {
-    private String id;
 
     Api() {
 
     }
 
+    private String id;
     private String name;
     private int wait;
     private String json;
@@ -54,7 +54,7 @@ public class Api {
 
     /////////////////////////////////////////////////
     // CRUD REPOSITORY
-    ////////////////////////////////////////////////
+    /////////////////////////////////////////////////
 
     public Iterable findAll() {
         return data;
@@ -134,6 +134,10 @@ public class Api {
         data = new JSONArray();
     }
 
+    /////////////////////////////////////////////////
+    // BUILDER
+    /////////////////////////////////////////////////
+
     public static class Builder {
 
         private Api config;
@@ -167,7 +171,6 @@ public class Api {
         public Api build () {
             return config;
         }
-
 
         public Builder withId(String apiId) {
             this.config.id = apiId;

@@ -2,17 +2,21 @@ package com.djulbic.datafactory.controllers;
 
 import com.djulbic.datafactory.model.Api;
 import com.djulbic.datafactory.model.JsonParserDL;
+import com.djulbic.datafactory.util.Utils;
 import com.google.gson.*;
 import data.DataLibrary;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONArray;
+import org.markdown4j.Markdown4jProcessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -25,6 +29,13 @@ public class DataFactoryController {
     private static final List<String> RESERVED_WORDS = Arrays.asList("apiName", "apiWait", "apiCount", "apiId", "apiLanguage");
 
     private Map<String, Api> apiMap = new HashMap();
+
+    @GetMapping("/")
+    public ResponseEntity<String> getIndex () throws IOException {
+        String content = Utils.readLineByLineJava8(new File("README.md").getAbsolutePath());
+        String html = new Markdown4jProcessor().process(content);
+        return new ResponseEntity<>(html, HttpStatus.OK);
+    }
 
     @GetMapping("/api/{apiName}")
     public ResponseEntity<String> get ( @PathVariable(name = "apiName") String apiName) {
@@ -45,6 +56,22 @@ public class DataFactoryController {
         if (byId.isPresent()) {
             return ResponseEntity.ok().body(byId.get().toString());
         }
+        return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/api/{apiName}/{apiId}")
+    public ResponseEntity<String> save (
+            @PathVariable(name = "apiName") String apiName,
+            @PathVariable(name = "apiId") String apiId) {
+
+        return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/api/{apiName}/{apiId}")
+    public ResponseEntity<String> update (
+            @PathVariable(name = "apiName") String apiName,
+            @PathVariable(name = "apiId") String apiId) {
+
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
 
@@ -166,6 +193,8 @@ public class DataFactoryController {
 
         return new ResponseEntity(parse.toString(), HttpStatus.OK);
     }
+
+
 
     private JSONArray parseJsonString (String json, String apiId, int count) throws InvocationTargetException, IllegalAccessException {
         DataLibrary data = DataLibrary.getEnglishData();
