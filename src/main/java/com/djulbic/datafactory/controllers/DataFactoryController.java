@@ -26,6 +26,8 @@ public class DataFactoryController {
     private static final String DEFAUL_API_ID = "apiId";
     private static final int DEFAULT_API_ITEM_COUNT = 1;
     private static final int DEFAULT_API_WAIT_TIME = 0;
+    private static final String DEFAULT_API_LANGUAGE = "english";
+
     private static final List<String> RESERVED_WORDS = Arrays.asList("apiName", "apiWait", "apiCount", "apiId", "apiLanguage");
 
     private Map<String, Api> apiMap = new HashMap();
@@ -128,7 +130,7 @@ public class DataFactoryController {
     }
 
     /////////////////////////////////////////////////
-    // SET
+    // CREATE API DEFINITIONS
     /////////////////////////////////////////////////
 
     @GetMapping("/set/{apiName}")
