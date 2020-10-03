@@ -52,12 +52,6 @@
 			<version>2.2-cj-1.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.github.lyxbassy</groupId>
-			<artifactId>Paspartu</artifactId>
-			<version>release1.9</version>
-		</dependency>
-
 <!--		<dependency>-->
 <!--			<groupId>com.github.djulbicb</groupId>-->
 <!--			<artifactId>DataLibrary</artifactId>-->
@@ -82,7 +76,7 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
 		<dependency>

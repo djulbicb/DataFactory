@@ -3,6 +3,7 @@ package com.djulb.datafactory.controllers;
 import com.djulb.datafactory.model.Api;
 import com.djulb.datafactory.model.JsonParserDL;
 import com.djulb.datafactory.util.Utils;
+import com.github.rjeschke.txtmark.Processor;
 import com.google.gson.*;
 import data.DataLibrary;
 import org.json.JSONObject;
@@ -15,6 +16,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,19 +33,22 @@ import static com.djulb.datafactory.util.Common.RESERVED_WORDS;
 @Controller
 public class DataFactoryController {
     private Map<String, Api> apiMap = new HashMap();
+    DataLibrary data = DataLibrary.getEnglishData();
 
     /////////////////////////////////////////////////
     // WELCOME PAGE
     /////////////////////////////////////////////////
 
     @GetMapping("/")
-    public ResponseEntity<String> showWelcomeScreen1() throws IOException {
+    public String showWelcomeScreen1(Model model) throws IOException {
         ClassLoader cl = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
         Resource resource = resolver.getResource("classpath:/README.md");
 
         String html = new Markdown4jProcessor().process(resource.getInputStream());
-        return new ResponseEntity<>(html, HttpStatus.OK);
+        model.addAttribute("content", html);
+
+        return "index";
     }
 
     /////////////////////////////////////////////////
@@ -57,8 +62,7 @@ public class DataFactoryController {
     ) throws IOException, InvocationTargetException, IllegalAccessException {
         DlRequest dlReq = new DlRequest(request, json);
         JSONArray parse = parseJsonString(dlReq.getJson(), dlReq.getApiId(), 1);
-
-        return new ResponseEntity<>(parse.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(parse.get(0).toString(), HttpStatus.OK);
     }
 
     @PostMapping("/{numberOfItems}")
@@ -100,15 +104,22 @@ public class DataFactoryController {
     }
 
     /////////////////////////////////////////////////
-    // SAVE
+    // SAVE / UPDATE
     /////////////////////////////////////////////////
 
     @PostMapping("/api/{apiName}")
     public ResponseEntity<String> save(
             @PathVariable(name = "apiName") String apiName,
-            @RequestBody(required = false) String json) {
+            @RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
         Api api = apiMap.get(apiName);
-        api.save(json);
+        JsonParserDL parse = new JsonParserDL(data);
+
+        JSONTokener token = new JSONTokener(json);
+        Object next = token.nextValue();
+
+        Object object = parse.parseJson(next);
+
+        api.save(object);
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
 
@@ -226,8 +237,6 @@ public class DataFactoryController {
     /////////////////////////////////////////////////
 
     private JSONArray parseJsonString(String json, String apiId, int count) throws InvocationTargetException, IllegalAccessException {
-        DataLibrary data = DataLibrary.getEnglishData();
-
         JsonParserDL parse = new JsonParserDL(data);
         JSONArray array = new JSONArray();
 

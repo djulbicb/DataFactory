@@ -17,6 +17,7 @@ public class Api {
     private int wait;
     private String json;
     private JSONArray data;
+    private int count;
 
     public JSONArray getData() {
         return data;
@@ -101,8 +102,15 @@ public class Api {
         return findById(searchId).isPresent();
     }
 
-    public Object save(Object o) {
-        return null;
+    public Object save(Object saveObj) {
+        if (saveObj instanceof JSONObject) {
+            JSONObject jsonObj = (JSONObject) saveObj;
+            if (!jsonObj.has(getId())) {
+                jsonObj.put(count + "", jsonObj);
+            }
+        }
+        count++;
+        return getData().put(saveObj);
     }
 
     public boolean deleteById(Object searchId) {
