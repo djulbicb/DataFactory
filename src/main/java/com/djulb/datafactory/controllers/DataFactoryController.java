@@ -1,14 +1,17 @@
-package com.djulbic.datafactory.controllers;
+package com.djulb.datafactory.controllers;
 
-import com.djulbic.datafactory.model.Api;
-import com.djulbic.datafactory.model.JsonParserDL;
-import com.djulbic.datafactory.util.Utils;
+import com.djulb.datafactory.model.Api;
+import com.djulb.datafactory.model.JsonParserDL;
+import com.djulb.datafactory.util.Utils;
 import com.google.gson.*;
 import data.DataLibrary;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONArray;
 import org.markdown4j.Markdown4jProcessor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -37,15 +40,19 @@ public class DataFactoryController {
     /////////////////////////////////////////////////
 
     @GetMapping("/")
-    public ResponseEntity<String> getIndex () throws IOException {
-        String content = Utils.readLineByLineJava8(new File("README.md").getAbsolutePath());
-        String html = new Markdown4jProcessor().process(content);
+    public ResponseEntity<String> showWelcomeScreen1() throws IOException {
+        ClassLoader cl = this.getClass().getClassLoader();
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
+        Resource resource = resolver.getResource("classpath:/README.md") ;
+
+        // String content = Utils.readLineByLineJava8(new File("classpath:/README.md").getAbsolutePath());
+        String html = new Markdown4jProcessor().process(resource.getInputStream());
         return new ResponseEntity<>(html, HttpStatus.OK);
     }
 
-    @PostMapping("/{numberOfItems}")
+    @PostMapping("/get/{numberOfItems}")
     public ResponseEntity<String> parseRandomObject (
-            @PathVariable(name = "numberOfItems", required = false, value = "100") int numberOfItems,
+            @PathVariable(name = "numberOfItems") int numberOfItems,
             @RequestBody(required = false) String json
     ) throws IOException, InvocationTargetException, IllegalAccessException {
         JSONArray parse = parseJsonString(json, DEFAUL_API_ID, numberOfItems);

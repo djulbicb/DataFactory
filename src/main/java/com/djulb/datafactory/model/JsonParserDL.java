@@ -1,7 +1,7 @@
-package com.djulbic.datafactory.model;
+package com.djulb.datafactory.model;
 
 
-import com.djulbic.datafactory.parser.MethodCallParser;
+import com.djulb.datafactory.parser.MethodCallParser;
 import data.DataLibrary;
 import org.json.JSONArray;
 import org.json.JSONObject;

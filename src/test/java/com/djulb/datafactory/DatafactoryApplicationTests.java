@@ -1,4 +1,4 @@
-package com.djulbic.datafactory;
+package com.djulb.datafactory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

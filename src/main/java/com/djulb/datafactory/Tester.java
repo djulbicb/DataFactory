@@ -1,6 +1,6 @@
-package com.djulbic.datafactory;
+package com.djulb.datafactory;
 
-import com.djulbic.datafactory.util.Utils;
+import com.djulb.datafactory.util.Utils;
 import org.markdown4j.Markdown4jProcessor;
 
 import java.io.File;

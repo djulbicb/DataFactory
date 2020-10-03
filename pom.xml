@@ -11,7 +11,7 @@
 	<groupId>com.djulbic</groupId>
 	<artifactId>datafactory</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Datafactory</name>
+	<name>datafactory</name>
 	<description>Demo project for Spring Boot</description>
 
 	<repositories>
@@ -23,10 +23,11 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<docker.image.prefix>djulb</docker.image.prefix>
+		<docker.image.name>datafactory</docker.image.name>
 	</properties>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -58,9 +59,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.djulb</groupId>
+			<groupId>com.github.djulbicb</groupId>
 			<artifactId>DataLibrary</artifactId>
-			<version>8.0-SNAPSHOT</version>
+			<version>v9.0</version>
 		</dependency>
 
 		<dependency>
@@ -103,6 +104,73 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.20.0</version>
+
+				<configuration>
+					<!--<dockerHost>http://127.0.0.1:2375</dockerHost>-->
+					<dockerHost>unix:///var/run/docker.sock</dockerHost>
+
+					<verbose>true</verbose>
+					<images>
+						<image>
+							<name>${docker.image.prefix}/${docker.image.name}</name>
+							<build>
+								<dockerFileDir>${project.basedir}/target/dockerfile</dockerFileDir>
+
+								<!--copies artficact to docker build dir in target-->
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<tags>
+									<tag>latest</tag>
+									<tag>${project.version}</tag>
+								</tags>
+							</build>
+							<run>
+								<ports>
+									<port>8080:8080</port>
+								</ports>
+							</run>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.djulb.datafactory.util.PrepareJarForDocker</mainClass>
+					<arguments>${project.name},${project.version}</arguments>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+					<target>8</target>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

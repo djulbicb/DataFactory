@@ -1,9 +1,7 @@
-package com.djulbic.datafactory.model;
+package com.djulb.datafactory.model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.http.ResponseEntity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.djulbic.datafactory.parser;
+package com.djulb.datafactory.parser;
 
 import data.DataLibrary;
 

@@ -1,4 +1,4 @@
-package com.djulbic.datafactory.util;
+package com.djulb.datafactory.util;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

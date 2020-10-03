@@ -1,4 +1,4 @@
-package com.djulbic.datafactory.configuration;
+package com.djulb.datafactory.configuration;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
