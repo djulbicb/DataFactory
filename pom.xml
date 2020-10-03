@@ -58,10 +58,16 @@
 			<version>release1.9</version>
 		</dependency>
 
+<!--		<dependency>-->
+<!--			<groupId>com.github.djulbicb</groupId>-->
+<!--			<artifactId>DataLibrary</artifactId>-->
+<!--			<version>v9.0</version>-->
+<!--		</dependency>-->
+
 		<dependency>
-			<groupId>com.github.djulbicb</groupId>
+			<groupId>com.djulb</groupId>
 			<artifactId>DataLibrary</artifactId>
-			<version>v9.0</version>
+			<version>10.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
