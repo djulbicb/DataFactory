@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style type="text/css">
+
+pre {
+
+    border: 1px solid #55555573;
+    border-radius: 0.25em;
+    padding: 0.25em;
+    background: #eef1f354;
+
+}
+	</style>
+</head>
+<body class="container">
+<h1>DataFactory</h1>
+<p>DataFactory exposes <a href="https://github.com/djulbicb/DataLibrary">DataLibrary</a> as an API service and web app with UI.
+    <br  /><br>These 2 projects allow users to create custom API service which provide random but realistic data, similar to lorem ipsum services.</p>
+<p>Users can send any JSON object to the API service and it will return a single or an array of JSON objects filled with data based on the object you sent (Check example below).
+    <br  />UI connects with database (just mysql for now) and inserts data into database</p>
+<h2>API</h2>
+<p>Send any JSON object to API and it will fill it with random data based on specified method call. For example</p>
+<pre><code>{
+   "name":"getNameMale()",
+   "test":{
+      "testname":"getName()"
+    },
+   "surname":"getSurname()",
+   "age":"getAgeAdult()",
+   "someFloat":"getDoubleInRange(10,50)",
+   "number":"getIntInRange(1,5)",
+   "list":[
+      "loremIpsum()",
+      "getSentence()"
+   ],
+   "something": "This will remain same cause it is isnt a method call"
+}
+</code></pre>
+<p>And it will return this JSON object as response.</p>
+<pre><code>{
+    "name": "Odell",
+    "test": {
+        "testname": "Rebecca"
+    },
+    "surname": "Heap",
+    "age": 49,
+    "someFloat": 44.12,
+    "number": 5,
+    "list": [
+        "Cras elit elit in gravida lectus.",
+        "Utils Siemens ment processed limits."
+    ],
+    "something": "This will remain same cause it is isnt a method call"
+}
+</code></pre>
+<h3>PHP  Example using AJAX for HTTP request</h3>
+<pre><code>class Test {
+    public $name;
+    public $surname;
+    public $age;
+    public $address;
+
+    function __construct($name, $surname, $age, $address){
+        $this-&gt;name = $name;
+        $this-&gt;surname = $surname;
+        $this-&gt;age = $age;
+        $this-&gt;address = $address;
+    }
+}
+
+$url = 'http://localhost:8091/api/getdata';
+$tastArray = array('key1' =&gt; 'getName()', 'key2' =&gt; 'getName()');
+$testObj = new Test("getName()", "getSurname()", "getIntInRange(10,15)", "getStreet()") ;
+var_dump($testObj);
+
+echo json_encode($testObj);
+
+$options = array(
+  'http' =&gt; array(
+    'method'  =&gt; 'POST',
+    'content' =&gt; json_encode( $testObj ),
+    'header'=&gt;  "Content-Type: application/json\r\n" .
+                "Accept: application/json\r\n"
+    )
+);
+
+$context  = stream_context_create( $options );
+$result = file_get_contents( $url, false, $context );
+
+
+$response = json_decode( $result );
+
+var_dump($response);
+echo $response-&gt;name;
+</code></pre>
+<h3>React example using axios for HTTP request</h3>
+<pre><code>import { Component } from "react"
+import React from 'react';
+import axios from 'axios';
+
+class Users extends Component{
+
+    componentDidMount(){
+        let url = "http://localhost:8091/api/getdata";
+        let user = {
+            name: 'getName()',
+            surname: 'getSurname()',
+            age: 'getIntBound(70)',
+            address: {
+                someStreetName: 'getStreet()',
+                someNumber: 'getIntInRange(10,50)',
+                city: 'getCity()',
+                description: 'getSentence()'
+            },
+            role: "pickRandom(admin,user)"
+        }
+
+        axios.post(url, user).then(response=&gt;{
+            console.log(response.data);
+        })
+    }
+
+    render(){
+        return (
+            &lt;div&gt;Users&lt;/div&gt;
+        )
+    }
+}
+
+export default Users;
+</code></pre>
+<h1>Run DataFactory with UI</h1>
+<p><img src=". /ui.PNG">
+    <br  />Connects to sql database (for now just mysql) and allows users to populate db with data.</p>
+<p>Add environment vars to IDE
+    <br  />| ENV VAR | VALUE |
+    <br  />|&ndash;|&ndash;|
+    <br  />| STORAGE_PATH | C:/Users/user/IdeaProjects/storage/ |
+    <br  />| DB_CONNECTIONS | dbConnections.json  |
+    <br  />| PRESETS_FOLDER | presets/</p>
+<h3>To do / test</h3>
+<ul>
+    <li>unique constraint, value already exist</li>
+    <li>add to docker</li>
+</ul>
+
+</body>
+</html>

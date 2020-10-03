@@ -30,12 +30,29 @@ public class DataFactoryController {
 
     private Map<String, Api> apiMap = new HashMap();
 
+    /////////////////////////////////////////////////
+    // INDEX
+    /////////////////////////////////////////////////
+
     @GetMapping("/")
     public ResponseEntity<String> getIndex () throws IOException {
         String content = Utils.readLineByLineJava8(new File("README.md").getAbsolutePath());
         String html = new Markdown4jProcessor().process(content);
         return new ResponseEntity<>(html, HttpStatus.OK);
     }
+
+    @PostMapping("/{numberOfItems}")
+    public ResponseEntity<String> parseRandomObject (
+            @PathVariable(name = "numberOfItems", required = false, value = "100") int numberOfItems,
+            @RequestBody(required = false) String json
+    ) throws IOException, InvocationTargetException, IllegalAccessException {
+        JSONArray parse = parseJsonString(json, DEFAUL_API_ID, numberOfItems);
+        return new ResponseEntity<>(parse.toString(), HttpStatus.OK);
+    }
+
+    /////////////////////////////////////////////////
+    // GET
+    /////////////////////////////////////////////////
 
     @GetMapping("/api/{apiName}")
     public ResponseEntity<String> get ( @PathVariable(name = "apiName") String apiName) {
@@ -59,6 +76,10 @@ public class DataFactoryController {
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
 
+    /////////////////////////////////////////////////
+    // SAVE
+    /////////////////////////////////////////////////
+
     @PostMapping("/api/{apiName}/{apiId}")
     public ResponseEntity<String> save (
             @PathVariable(name = "apiName") String apiName,
@@ -67,6 +88,10 @@ public class DataFactoryController {
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
 
+    /////////////////////////////////////////////////
+    // UPDATE
+    /////////////////////////////////////////////////
+
     @PutMapping("/api/{apiName}/{apiId}")
     public ResponseEntity<String> update (
             @PathVariable(name = "apiName") String apiName,
@@ -74,6 +99,10 @@ public class DataFactoryController {
 
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
+
+    /////////////////////////////////////////////////
+    // DELETE
+    /////////////////////////////////////////////////
 
     @DeleteMapping("/api/{apiName}")
     public ResponseEntity<String> delete (
@@ -97,6 +126,10 @@ public class DataFactoryController {
         }
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
+
+    /////////////////////////////////////////////////
+    // SET
+    /////////////////////////////////////////////////
 
     @GetMapping("/set/{apiName}")
     public ResponseEntity<String> set (
@@ -194,7 +227,9 @@ public class DataFactoryController {
         return new ResponseEntity(parse.toString(), HttpStatus.OK);
     }
 
-
+    /////////////////////////////////////////////////
+    // FUNCTIONS
+    /////////////////////////////////////////////////
 
     private JSONArray parseJsonString (String json, String apiId, int count) throws InvocationTargetException, IllegalAccessException {
         DataLibrary data = DataLibrary.getEnglishData();

@@ -1,4 +1,4 @@
-package com.djulbic.datafactory;
+package com.djulbic.datafactory.parser;
 
 import data.DataLibrary;
 
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class MethodCallParser {
+
     public Object parse(DataLibrary dataLibrary, String methodCall, String delimiter){
         String methodNameSubstr = getMethodNameSubstrFromString(methodCall);
         String paramSubstr = getMethodParamsSubstrFromString(methodCall);
