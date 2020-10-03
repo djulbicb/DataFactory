@@ -106,7 +106,7 @@ public class Api {
         if (saveObj instanceof JSONObject) {
             JSONObject jsonObj = (JSONObject) saveObj;
             if (!jsonObj.has(getId())) {
-                jsonObj.put(count + "", jsonObj);
+                jsonObj.put(getId(), count);
             }
         }
         count++;
