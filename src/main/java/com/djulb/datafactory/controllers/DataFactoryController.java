@@ -61,7 +61,7 @@ public class DataFactoryController {
             @RequestBody(required = false) String json
     ) throws IOException, InvocationTargetException, IllegalAccessException {
         DlRequest dlReq = new DlRequest(request, json);
-        JSONArray parse = parseJsonString(dlReq.getJson(), dlReq.getApiId(), 1);
+        JSONArray parse = (JSONArray) parseJsonString(dlReq.getJson(), 1);
         return new ResponseEntity<>(parse.get(0).toString(), HttpStatus.OK);
     }
 
@@ -73,7 +73,7 @@ public class DataFactoryController {
     ) throws IOException, InvocationTargetException, IllegalAccessException {
         DlRequest dlReq = new DlRequest(request, json);
 
-        JSONArray parse = parseJsonString(dlReq.getJson(), dlReq.getApiId(), numberOfItems);
+        JSONArray parse = parseJsonString(dlReq.getJson(),numberOfItems);
         return new ResponseEntity<>(parse.toString(), HttpStatus.OK);
     }
 
@@ -95,6 +95,9 @@ public class DataFactoryController {
             @PathVariable(name = "apiName") String apiName,
             @PathVariable(name = "apiId") String apiId) {
         Api api = apiMap.get(apiName);
+        if (api == null) {
+            return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
+        }
 
         Optional byId = api.findById(apiId);
         if (byId.isPresent()) {
@@ -109,27 +112,47 @@ public class DataFactoryController {
 
     @PostMapping("/api/{apiName}")
     public ResponseEntity<String> save(
+            HttpServletRequest request,
             @PathVariable(name = "apiName") String apiName,
             @RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
+
+        DlRequest dlReq = new DlRequest(request, json);
+
         Api api = apiMap.get(apiName);
+        if (api == null) {
+            return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
+        }
+
         JsonParserDL parse = new JsonParserDL(data);
+        Object objectForSaving = parse.parseJson(dlReq.getJson());
+        Object save = api.save(objectForSaving);
 
-        JSONTokener token = new JSONTokener(json);
-        Object next = token.nextValue();
-
-        Object object = parse.parseJson(next);
-
-        api.save(object);
+        if (save != null) {
+            return new ResponseEntity(save.toString(), HttpStatus.OK);
+        }
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/api/{apiName}/{apiId}")
     public ResponseEntity<String> update(
+            HttpServletRequest request,
             @PathVariable(name = "apiName") String apiName,
             @PathVariable(name = "apiId") String apiId,
-            @RequestBody(required = false) String json) {
+            @RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
         Api api = apiMap.get(apiName);
-        api.save(json);
+
+        if (api == null) {
+            return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
+        }
+
+        DlRequest dlReq = new DlRequest(request, json);
+        JsonParserDL parse = new JsonParserDL(data);
+        Object objectForSaving = parse.parseJson(dlReq.getJson());
+        Object save = api.update(apiId, objectForSaving);
+
+        if (save != null) {
+            return new ResponseEntity(save.toString(), HttpStatus.OK);
+        }
         return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
     }
 
@@ -153,6 +176,10 @@ public class DataFactoryController {
             @PathVariable(name = "apiName") String apiName,
             @PathVariable(name = "apiId") String apiId) {
         Api api = apiMap.get(apiName);
+        if (api == null) {
+            return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
+        }
+
         boolean deleted = api.deleteById(apiId);
         if (deleted) {
             return new ResponseEntity(api.findAll().toString(), HttpStatus.OK);
@@ -197,7 +224,7 @@ public class DataFactoryController {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(object);
 
-        JSONArray parse = parseJsonString(json, DEFAUL_API_ID, apiCount);
+        JSONArray parse = (JSONArray) parseJsonString(json, apiCount);
 
         Api api = new Api.Builder()
                 .withName(apiName)
@@ -219,7 +246,7 @@ public class DataFactoryController {
 
         DlRequest dlReq = new DlRequest(request, json);
 
-        JSONArray parse = parseJsonString(dlReq.getJson(), dlReq.getApiId(), dlReq.getApiCount());
+        JSONArray parse = (JSONArray) parseJsonString(dlReq.getJson(), dlReq.getApiCount());
 
         Api api = new Api.Builder()
                 .withName(apiName)
@@ -236,24 +263,19 @@ public class DataFactoryController {
     // FUNCTIONS
     /////////////////////////////////////////////////
 
-    private JSONArray parseJsonString(String json, String apiId, int count) throws InvocationTargetException, IllegalAccessException {
+    private Object parseJsonString(String json) throws InvocationTargetException, IllegalAccessException {
+        JsonParserDL parse = new JsonParserDL(data);
+        return parse.parseJson(json);
+    }
+
+    private JSONArray parseJsonString(String json, int count) throws InvocationTargetException, IllegalAccessException {
         JsonParserDL parse = new JsonParserDL(data);
         JSONArray array = new JSONArray();
 
         for (int i = 0; i < count; i++) {
-            JSONTokener token = new JSONTokener(json);
-            Object next = token.nextValue();
-
-            Object o = parse.parseJson(next);
-
-            if (apiId.equals(DEFAUL_API_ID) && o instanceof JSONObject) {
-                JSONObject object = (JSONObject) o;
-                object.put(apiId, i);
-            }
-
+            Object o = parse.parseJson(json);
             array.put(o);
         }
         return array;
     }
-
 }

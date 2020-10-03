@@ -5,6 +5,7 @@ import com.djulb.datafactory.parser.MethodCallParser;
 import data.DataLibrary;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
@@ -13,6 +14,12 @@ public class JsonParserDL {
     private DataLibrary dataLibrary;
     public JsonParserDL(DataLibrary dataLibrary) {
         this.dataLibrary = dataLibrary;
+    }
+
+    public Object parseJson(String json) throws InvocationTargetException, IllegalAccessException {
+        JSONTokener token = new JSONTokener(json);
+        Object next = token.nextValue();
+        return parseJson(next);
     }
 
     public Object parseJson(Object next) throws InvocationTargetException, IllegalAccessException {
