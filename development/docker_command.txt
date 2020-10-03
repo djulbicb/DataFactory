@@ -13,3 +13,9 @@ docker run  \
 --link some-rabbit:rabbitmq \
 -e SPRING_RABBITMQ_HOST=rabbitmq \
 djulb/pageview_reader
+
+
+docker login
+u
+p
+docker push djulb/datafactory:tagname

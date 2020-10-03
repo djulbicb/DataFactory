@@ -1,4 +1,4 @@
-package com.djulb.datafactory.controllers;
+package com.djulb.datafactory.controllers.request;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,14 +11,14 @@ import static com.djulb.datafactory.util.Common.DEFAULT_API_WAIT_TIME;
 import static com.djulb.datafactory.util.Common.DEFAUL_API_ID;
 import static com.djulb.datafactory.util.Common.RESERVED_WORDS;
 
-public class DlRequest {
+public class PostRequest {
 
     private String json;
     private int apiWait;
     private int apiCount;
     private String apiId;
 
-    public DlRequest(HttpServletRequest request, String json) {
+    public PostRequest(HttpServletRequest request, String json) {
         this.json = json;
 
         apiWait = DEFAULT_API_WAIT_TIME;

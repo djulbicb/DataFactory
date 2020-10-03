@@ -1,4 +1,4 @@
-package com.djulb.datafactory.model;
+package com.djulb.datafactory.parser;
 
 
 import com.djulb.datafactory.parser.MethodCallParser;

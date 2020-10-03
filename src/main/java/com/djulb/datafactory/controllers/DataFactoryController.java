@@ -1,13 +1,10 @@
 package com.djulb.datafactory.controllers;
 
+import com.djulb.datafactory.controllers.request.PostRequest;
 import com.djulb.datafactory.model.Api;
-import com.djulb.datafactory.model.JsonParserDL;
-import com.djulb.datafactory.util.Utils;
-import com.github.rjeschke.txtmark.Processor;
+import com.djulb.datafactory.parser.JsonParserDL;
 import com.google.gson.*;
 import data.DataLibrary;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.json.JSONArray;
 import org.markdown4j.Markdown4jProcessor;
 import org.springframework.core.io.Resource;
@@ -20,14 +17,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import static com.djulb.datafactory.util.Common.DEFAULT_API_ITEM_COUNT;
-import static com.djulb.datafactory.util.Common.DEFAULT_API_WAIT_TIME;
-import static com.djulb.datafactory.util.Common.DEFAUL_API_ID;
 import static com.djulb.datafactory.util.Common.RESERVED_WORDS;
 
 @Controller
@@ -41,11 +35,7 @@ public class DataFactoryController {
 
     @GetMapping("/")
     public String showWelcomeScreen1(Model model) throws IOException {
-        ClassLoader cl = this.getClass().getClassLoader();
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
-        Resource resource = resolver.getResource("classpath:/README.md");
-
-        String html = new Markdown4jProcessor().process(resource.getInputStream());
+        String html = new Markdown4jProcessor().process(readResourceAsStream("classpath:/README.md"));
         model.addAttribute("content", html);
 
         return "index";
@@ -60,7 +50,7 @@ public class DataFactoryController {
             HttpServletRequest request,
             @RequestBody(required = false) String json
     ) throws IOException, InvocationTargetException, IllegalAccessException {
-        DlRequest dlReq = new DlRequest(request, json);
+        PostRequest dlReq = new PostRequest(request, json);
         JSONArray parse = (JSONArray) parseJsonString(dlReq.getJson(), 1);
         return new ResponseEntity<>(parse.get(0).toString(), HttpStatus.OK);
     }
@@ -71,7 +61,7 @@ public class DataFactoryController {
             @PathVariable(name = "numberOfItems") int numberOfItems,
             @RequestBody(required = false) String json
     ) throws IOException, InvocationTargetException, IllegalAccessException {
-        DlRequest dlReq = new DlRequest(request, json);
+        PostRequest dlReq = new PostRequest(request, json);
 
         JSONArray parse = parseJsonString(dlReq.getJson(),numberOfItems);
         return new ResponseEntity<>(parse.toString(), HttpStatus.OK);
@@ -116,7 +106,7 @@ public class DataFactoryController {
             @PathVariable(name = "apiName") String apiName,
             @RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
 
-        DlRequest dlReq = new DlRequest(request, json);
+        PostRequest dlReq = new PostRequest(request, json);
 
         Api api = apiMap.get(apiName);
         if (api == null) {
@@ -145,7 +135,7 @@ public class DataFactoryController {
             return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
         }
 
-        DlRequest dlReq = new DlRequest(request, json);
+        PostRequest dlReq = new PostRequest(request, json);
         JsonParserDL parse = new JsonParserDL(data);
         Object objectForSaving = parse.parseJson(dlReq.getJson());
         Object save = api.update(apiId, objectForSaving);
@@ -197,6 +187,7 @@ public class DataFactoryController {
             @PathVariable(name = "apiName") String apiName,
             @RequestParam(name = "apiWait", required = false, defaultValue = "0") int apiWait,
             @RequestParam(name = "apiCount", required = false, defaultValue = "100") int apiCount) throws InvocationTargetException, IllegalAccessException {
+
         JsonObject object = new JsonObject();
 
         Map<String, String[]> map = request.getParameterMap();
@@ -221,10 +212,10 @@ public class DataFactoryController {
             object.addProperty(key, value);
         }
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(object);
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        String json = gson.toJson(object);
 
-        JSONArray parse = (JSONArray) parseJsonString(json, apiCount);
+        JSONArray parse = parseJsonString(object.toString(), apiCount);
 
         Api api = new Api.Builder()
                 .withName(apiName)
@@ -234,7 +225,7 @@ public class DataFactoryController {
 
         apiMap.put(apiName, api);
 
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(parse.toString(), HttpStatus.OK);
     }
 
     @PostMapping("/set/{apiName}")
@@ -244,7 +235,7 @@ public class DataFactoryController {
             @PathVariable(name = "apiName") String apiName
     ) throws InvocationTargetException, IllegalAccessException {
 
-        DlRequest dlReq = new DlRequest(request, json);
+        PostRequest dlReq = new PostRequest(request, json);
 
         JSONArray parse = (JSONArray) parseJsonString(dlReq.getJson(), dlReq.getApiCount());
 
@@ -277,5 +268,12 @@ public class DataFactoryController {
             array.put(o);
         }
         return array;
+    }
+
+    private InputStream readResourceAsStream(String s) throws IOException {
+        ClassLoader cl = this.getClass().getClassLoader();
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
+        Resource resource = resolver.getResource("classpath:/README.md");
+        return resource.getInputStream();
     }
 }
