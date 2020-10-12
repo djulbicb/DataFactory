@@ -11,7 +11,7 @@ docker run -p 8080:8080 djulb/datafactory
 ```
   
 ## REST Example  
-Send any JSON object to API and it will fill it with random data based on method call. For example  
+Send any JSON object to API and it will fill it with random data based on method call. For the list of methods you can call go to commands section of [DataLibrary](https://github.com/djulbicb/DataLibrary) documentation page. For example  
 ```  
 {
    "name":"getNameMale()",
