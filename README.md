@@ -126,4 +126,73 @@ class Users extends Component{
 
 export default Users;
 ```
- 
+### Java example using WebClient for HTTP request
+Requires dependency
+```
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>    
+```
+
+Model data
+```
+package com.example.jsp.configuration;
+
+public class Employee {
+    private String name;
+    private String surname;
+    private Address address;
+    
+    ... getters and setters
+}
+
+package com.example.jsp.configuration;
+
+public class Address {
+    private String streetName;
+    private String houseNumber;
+    
+    ... getters and setters
+}
+```
+JavaExample
+```
+package com.example.jsp.configuration;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+
+public class JavaExample {
+    public static void main(String[] args) {
+        WebClient webClient = WebClient.create("http://localhost:7070");
+
+        Employee em = new Employee();
+        Address ad = new Address();
+        em.setName("getName()");
+        em.setSurname("getSurname()");
+        ad.setStreetName("getStreet()");
+        ad.setHouseNumber("getIntInRange(1,5)");
+        em.setAddress(ad);
+
+        Employee createdEmployee = webClient.post()
+                .uri("/")
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(em)
+                .retrieve()
+                .bodyToMono(Employee.class)
+                .block();
+
+
+        System.out.println(createdEmployee);
+    }
+}
+```
