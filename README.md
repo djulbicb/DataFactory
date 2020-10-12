@@ -172,8 +172,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 public class JavaExample {
     public static void main(String[] args) {
-        WebClient webClient = WebClient.create("http://localhost:7070");
-
+	// Data model
         Employee em = new Employee();
         Address ad = new Address();
         em.setName("getName()");
@@ -182,17 +181,29 @@ public class JavaExample {
         ad.setHouseNumber("getIntInRange(1,5)");
         em.setAddress(ad);
 
-        Employee createdEmployee = webClient.post()
+	// Single mock object
+	WebClient webClientSingle = WebClient.create("http://localhost:7070");
+        Employee createdEmployee = webClientSingle.post()
                 .uri("/")
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .bodyValue(em)
                 .retrieve()
-                .bodyToMono(Employee.class)
-                .block();
-
-
-        System.out.println(createdEmployee);
+                .toEntity(Employee.class)
+                .block().getBody();
+	System.out.println(createdEmployee);
+	
+	// List of mock objects
+	WebClient webClientList = WebClient.create("http://localhost:7070/10");
+        List<Employee> createdEmployees = webClientList.post()
+                .uri("/")
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(em)
+                .retrieve()
+                .toEntityList(Employee.class)
+                .block().getBody();
+        System.out.println(createdEmployees);
     }
 }
 ```
