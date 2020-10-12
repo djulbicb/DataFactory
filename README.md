@@ -1,14 +1,17 @@
 
 # DataFactory  
   
-DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as an API service and web app with UI.  
-<br>These 2 projects allow users to create custom API service which provide random but realistic data, similar to lorem ipsum services.  
+DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as an API service. This project allow users to create custom REST API service which provide random but realistic data, similar to lorem ipsum services.  
   
-Users can send any JSON object to the API service and it will return a single or an array of JSON objects filled with data based on the object you sent (Check example below). 
-UI connects with database (just mysql for now) and inserts data into database     
+To configure it, send any JSON object to API service and it will return one or multiple mock JSON objects. These mock objects are structured and filled with data based on the sent object. (Check example below).
+
+## Run it as docker
+```
+docker run -p 8080:8080 djulb/datafactory
+```
   
-## API  
-Send any JSON object to API and it will fill it with random data based on specified method call. For example  
+## Examples  
+Send any JSON object to API and it will fill it with random data based on method call. For example  
 ```  
 {
    "name":"getNameMale()",
@@ -61,7 +64,7 @@ class Test {
 	}
 }
 
-$url = 'http://localhost:8091/api/getdata';
+$url = 'http://localhost:8080/api/getdata';
 $tastArray = array('key1' => 'getName()', 'key2' => 'getName()');
 $testObj = new Test("getName()", "getSurname()", "getIntInRange(10,15)", "getStreet()") ;
 var_dump($testObj);
@@ -95,7 +98,7 @@ import axios from 'axios';
 class Users extends Component{
 
     componentDidMount(){
-        let url = "http://localhost:8091/api/getdata";
+        let url = "http://localhost:8080/api/getdata";
         let user = {
             name: 'getName()',
             surname: 'getSurname()',
@@ -123,19 +126,4 @@ class Users extends Component{
 
 export default Users;
 ```
-  
-# Run DataFactory with UI
-<img src="./ui.PNG">
-Connects to sql database (for now just mysql) and allows users to populate db with data. 
-
-Add environment vars to IDE
-| ENV VAR | VALUE |
-|--|--|
-| STORAGE_PATH | C:/Users/user/IdeaProjects/storage/ |
-| DB_CONNECTIONS | dbConnections.json  |
-| PRESETS_FOLDER | presets/
-  
-### To do / test  
-- unique constraint, value already exist  
-- add to docker  
-
+ 
