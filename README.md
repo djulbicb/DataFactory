@@ -1,7 +1,7 @@
 
 # DataFactory  
   
-DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as an API service. This project allow users to create custom REST API service which provide random but realistic data, similar to lorem ipsum services.  
+DataFactory exposes [DataLibrary](https://github.com/djulbicb/DataLibrary) as an API service. You can easily create custom REST APIs which provide random but realistic data, similar to lorem ipsum services.  
   
 To configure it, send any JSON object to API service and it will return one or multiple mock JSON objects. These mock objects are structured and filled with data based on the sent object. (Check example below).
 
@@ -10,7 +10,7 @@ To configure it, send any JSON object to API service and it will return one or m
 docker run -p 8080:8080 djulb/datafactory
 ```
   
-## Examples  
+## REST Example  
 Send any JSON object to API and it will fill it with random data based on method call. For example  
 ```  
 {
@@ -47,6 +47,22 @@ And it will return this JSON object as response.
     "something": "This will remain same cause it is isnt a method call"
 }
 ```   
+## Commands
+List of commands to call on localhost
+|url  |example  |method  |result  |
+|--|--|--|--|
+|/  |/|GET  |Shows project documentation|
+|/  |/|POST  |Returns single mock object
+|/{n}  |/10|POST  |Returns a list of n mock objects
+|/set/{apiName}  |/set/myapi?n=getName()&txt=loremIpsum()|GET  |Creates simple REST service based on URL params
+|/set/{apiName} |/set/myapi|POST  |Creates REST service based on JSON object
+|/api/{apiName}  |/set/myapi|GET  |Get all objects from REST service
+|/api/{apiName}/{key}  |/myapi/1|GET  |Get single object from REST service
+|/api/{apiName}/{key}  |/myapi/1|UPDATE  |Update single object from REST service.
+|/api/{apiName}  |/myapi|DELETE  |Delete REST service
+|/api/{apiName}/{key}  |/myapi/1|DELETE  |Delete single object from REST service
+
+## Code examples
 
 ### PHP  Example using AJAX for HTTP request
 ```
