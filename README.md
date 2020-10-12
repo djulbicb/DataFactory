@@ -57,8 +57,8 @@ List of commands to call on localhost
 |/set/{apiName}  |/set/myapi?n=getName()&txt=loremIpsum()|GET  |Creates simple REST service based on URL params
 |/set/{apiName} |/set/myapi|POST  |Creates REST service based on JSON object
 |/api/{apiName}  |/set/myapi|GET  |Get all objects from REST service
-|/api/{apiName}/{key}  |/api/myapi/1|GET  |Get single object from REST service
-|/api/{apiName}/{key}  |/api/myapi/1|PUT  |Update single object from REST service.
+|/api/{apiName}/{key}  |/api/myapi/sss|GET  |Get single object from REST service with id sss
+|/api/{apiName}/{key}  |/api/myapi/sss|PUT  |Update single object from REST service with id sss
 |/api/{apiName}  |/api/myapi|DELETE  |Delete REST service
 |/api/{apiName}/{key}  |/api/myapi/1|DELETE  |Delete single object from REST service
 
