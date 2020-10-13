@@ -296,3 +296,9 @@ When creating a service using GET or POST methods pass add some of these url par
           }
       }
 ```
+
+TODO:
+- improve logging
+- allow user to pick a language, currently english only
+- assign datafactory to each api. Parse api request in a bulk instead one by one. Goal: So it can give back related data - example if user asks for a world country it will receive back a city or capital related to that country
+
