@@ -110,7 +110,7 @@ You fetch an object using `http://localhost:8080/api/djulb/6` and get this
  `  http://localhost:8080/api/djulb/1`. 
  In this case 1 is the id of the element.  An id can be a number of string. By default id field is `apiId` but you can specify your own custom id field using url param `apiId` when creating the service.
  
- >Update an element with PUT method
+ >Update an element with POST method
 
 `  http://localhost:8080/api/djulb/1`. 
 Updates specified object. Doesn't check if JSON structure of old and new object are identical (You are on your own then :)  
