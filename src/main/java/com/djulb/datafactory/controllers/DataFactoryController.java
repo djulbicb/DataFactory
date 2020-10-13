@@ -1,6 +1,6 @@
 package com.djulb.datafactory.controllers;
 
-import com.djulb.datafactory.controllers.request.PostRequest;
+import com.djulb.datafactory.model.ApiConfig;
 import com.djulb.datafactory.model.Api;
 import com.djulb.datafactory.parser.JsonParserDL;
 import com.google.gson.*;
@@ -47,23 +47,18 @@ public class DataFactoryController {
 
     @PostMapping("/")
     public ResponseEntity<String> parseRandomObject(
-            HttpServletRequest request,
             @RequestBody(required = false) String json
     ) throws IOException, InvocationTargetException, IllegalAccessException {
-        PostRequest dlReq = new PostRequest(request, json);
-        JSONArray parse = (JSONArray) parseJsonString(dlReq.getJson(), 1);
+        JSONArray parse = parseJsonString(json, 1);
         return new ResponseEntity<>(parse.get(0).toString(), HttpStatus.OK);
     }
 
     @PostMapping("/{numberOfItems}")
     public ResponseEntity<String> parseRandomObjects(
-            HttpServletRequest request,
             @PathVariable(name = "numberOfItems") int numberOfItems,
             @RequestBody(required = false) String json
     ) throws IOException, InvocationTargetException, IllegalAccessException {
-        PostRequest dlReq = new PostRequest(request, json);
-
-        JSONArray parse = parseJsonString(dlReq.getJson(),numberOfItems);
+        JSONArray parse = parseJsonString(json, numberOfItems);
         return new ResponseEntity<>(parse.toString(), HttpStatus.OK);
     }
 
@@ -100,29 +95,6 @@ public class DataFactoryController {
     // SAVE / UPDATE
     /////////////////////////////////////////////////
 
-    @PostMapping("/api/{apiName}")
-    public ResponseEntity<String> save(
-            HttpServletRequest request,
-            @PathVariable(name = "apiName") String apiName,
-            @RequestBody(required = false) String json) throws InvocationTargetException, IllegalAccessException {
-
-        PostRequest dlReq = new PostRequest(request, json);
-
-        Api api = apiMap.get(apiName);
-        if (api == null) {
-            return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
-        }
-
-        JsonParserDL parse = new JsonParserDL(data);
-        Object objectForSaving = parse.parseJson(dlReq.getJson());
-        Object save = api.save(objectForSaving);
-
-        if (save != null) {
-            return new ResponseEntity(save.toString(), HttpStatus.OK);
-        }
-        return new ResponseEntity("No element with that id", HttpStatus.BAD_REQUEST);
-    }
-
     @PostMapping("/api/{apiName}/{apiId}")
     public ResponseEntity<String> update(
             HttpServletRequest request,
@@ -135,9 +107,8 @@ public class DataFactoryController {
             return new ResponseEntity("No api with that name", HttpStatus.BAD_REQUEST);
         }
 
-        PostRequest dlReq = new PostRequest(request, json);
         JsonParserDL parse = new JsonParserDL(data);
-        Object objectForSaving = parse.parseJson(dlReq.getJson());
+        Object objectForSaving = parse.parseJson(json);
         Object save = api.update(apiId, objectForSaving);
 
         if (save != null) {
@@ -184,68 +155,39 @@ public class DataFactoryController {
     @GetMapping("/set/{apiName}")
     public ResponseEntity<String> set(
             HttpServletRequest request,
-            @PathVariable(name = "apiName") String apiName,
-            @RequestParam(name = "apiWait", required = false, defaultValue = "0") int apiWait,
-            @RequestParam(name = "apiCount", required = false, defaultValue = "100") int apiCount) throws InvocationTargetException, IllegalAccessException {
+            @PathVariable String apiName,
+            ApiConfig apiConfig) throws InvocationTargetException, IllegalAccessException {
 
-        JsonObject object = new JsonObject();
-
-        Map<String, String[]> map = request.getParameterMap();
-        for (Map.Entry<String, String[]> entry : map.entrySet()) {
-            String key = entry.getKey();
-
-            if (RESERVED_WORDS.contains(key)) {
-                continue;
-            }
-
-            String paramValue[] = entry.getValue();
-
-            String value = "";
-            if (paramValue.length > 1) {
-                value = Arrays.toString(paramValue);
-            } else if (paramValue.length == 1) {
-                value = paramValue[0];
-            } else {
-                value = "";
-            }
-
-            object.addProperty(key, value);
-        }
-
-//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//        String json = gson.toJson(object);
-
-        JSONArray parse = parseJsonString(object.toString(), apiCount);
+        JsonObject object = buildJsonObjFromGetRequest(request);
+        JSONArray parse = parseJsonString(object.toString(), apiConfig.getApiCount());
 
         Api api = new Api.Builder()
+                .withId(apiConfig.getApiId())
                 .withName(apiName)
-                .withWait(apiWait)
+                .withWait(apiConfig.getApiWait())
                 .withData(parse)
                 .build();
-
-        apiMap.put(apiName, api);
+        apiMap.put(apiConfig.getApiName(), api);
 
         return new ResponseEntity<>(parse.toString(), HttpStatus.OK);
     }
 
-    @PostMapping("/set/{apiName}")
+    @PostMapping("/set/{apiNameVar}")
     public ResponseEntity<String> getDataList(
             HttpServletRequest request,
             @RequestBody(required = false) String json,
-            @PathVariable(name = "apiName") String apiName
+            @PathVariable(name = "apiNameVar") String apiNameVar,
+            ApiConfig apiConfig
     ) throws InvocationTargetException, IllegalAccessException {
-
-        PostRequest dlReq = new PostRequest(request, json);
-
-        JSONArray parse = (JSONArray) parseJsonString(dlReq.getJson(), dlReq.getApiCount());
+        JSONArray parse = parseJsonString(json, apiConfig.getApiCount());
 
         Api api = new Api.Builder()
-                .withName(apiName)
-                .withId(dlReq.getApiId())
-                .withWait(dlReq.getApiWait())
+                .withName(apiNameVar)
+                .withId(apiConfig.getApiId())
+                .withWait(apiConfig.getApiWait())
                 .withData(parse)
                 .build();
-        apiMap.put(apiName, api);
+        apiMap.put(apiNameVar, api);
 
         return new ResponseEntity(parse.toString(), HttpStatus.OK);
     }
@@ -276,4 +218,38 @@ public class DataFactoryController {
         Resource resource = resolver.getResource("classpath:/README.md");
         return resource.getInputStream();
     }
+
+    /**
+     * Ignores url request params that configure rest service like apiWait, apiName...,
+     * and creates a basic json object from the rest of url params
+     * @param request
+     * @return
+     */
+    private JsonObject buildJsonObjFromGetRequest(HttpServletRequest request) {
+        JsonObject jsonObject = new JsonObject();
+
+        Map<String, String[]> map = request.getParameterMap();
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+            String key = entry.getKey();
+
+            if (RESERVED_WORDS.contains(key)) {
+                continue;
+            }
+
+            String paramValue[] = entry.getValue();
+
+            String value = "";
+            if (paramValue.length > 1) {
+                value = Arrays.toString(paramValue);
+            } else if (paramValue.length == 1) {
+                value = paramValue[0];
+            } else {
+                value = "";
+            }
+
+            jsonObject.addProperty(key, value);
+        }
+        return jsonObject;
+    }
+
 }

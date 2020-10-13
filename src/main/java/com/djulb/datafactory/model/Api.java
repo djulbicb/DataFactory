@@ -100,6 +100,8 @@ public class Api {
             JSONObject jsonObj = (JSONObject) saveObj;
             if (!jsonObj.has(getId()) && getId().equals(Common.DEFAUL_API_ID)) {
                 jsonObj.put(getId(), count);
+            } else {
+                jsonObj.put(getId(), apiId);
             }
             getData().put(saveObj);
             return saveObj;

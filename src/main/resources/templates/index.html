@@ -1,3 +1,5 @@
+<!-- THIS FILE IS USED AS A TEMPLATE -->
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -7,15 +9,20 @@
 
     <style type="text/css">
     pre {
-
         border: 1px solid #55555573;
         border-radius: 0.25em;
         padding: 0.25em;
         background: #eef1f354;
     }
+
+    blockquote p:first-child{
+        margin: 0 0 1rem;
+        border-left: 5px solid #ccc;
+        padding-left: 0.5em;
+    }
 	</style>
 </head>
 <body class="container">
-<p th:utext="${content}"></p>
+    <div th:utext="${content}"></div>
 </body>
 </html>
