@@ -5,6 +5,7 @@
 To configure it, send any JSON object to API service and it will return one or multiple mock JSON objects. These mock objects are structured and filled with data based on the sent object. (Check example below).  
   
 ## Run it as docker  
+Available at [Dockerhub](https://hub.docker.com/r/djulb/datafactory)
 ```  
      docker run -p 8080:8080 djulb/datafactory  
 ```  
